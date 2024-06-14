@@ -13,20 +13,17 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class JwtResponse {
-    String id;
-    String email;
-    String jwt;
-    String type = "Bearer";
+@Builder
+public class AuthResponse {
+    String accessToken;
+    String type;
     String roles;
 
-    public JwtResponse(String id, String email, String jwt, String roles) {
-        this.id = id;
-        this.email = email;
-        this.jwt = jwt;
+    public AuthResponse(String accessToken, String type, String roles) {
+        this.accessToken = accessToken;
+        this.type = "Bearer";
         this.roles = roles;
     }
 }

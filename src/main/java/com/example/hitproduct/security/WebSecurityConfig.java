@@ -7,9 +7,11 @@ package com.example.hitproduct.security;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.security.jwt.AuthTokenFilter;
 import com.example.hitproduct.security.jwt.JwtAuthEntryPoint;
-import com.example.hitproduct.security.user.UserDetailsServiceImpl;
+import com.example.hitproduct.service.AuthService;
+import com.example.hitproduct.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -33,10 +35,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class WebSecurityConfig {
-    UserDetailsServiceImpl userDetailsService;
+    String CATCH_ALL_WILDCARD = "/**";
+
+    UserService userService;
     JwtAuthEntryPoint authEntryPoint;
+    AuthTokenFilter authTokenFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -44,34 +49,31 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthTokenFilter authTokenFilter(){
-        return new AuthTokenFilter();
-    }
-
-    @Bean
     public DaoAuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        provider.setUserDetailsService(userService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration
+    ) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .anyRequest().authenticated());
-
-        http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(Endpoint.V1.Auth.PREFIX + CATCH_ALL_WILDCARD).permitAll()
+                        .anyRequest().authenticated()
+            )
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
