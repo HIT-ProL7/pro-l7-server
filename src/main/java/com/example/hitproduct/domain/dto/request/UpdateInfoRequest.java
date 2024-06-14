@@ -8,21 +8,12 @@ package com.example.hitproduct.domain.dto.request;
  */
 
 import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateUserRequest {
-    @NotEmpty(message = "Username is not empty")
-    String password;
-
+public record UpdateInfoRequest(
     @NotEmpty(message = "Email is not empty")
-    String email;
+    String email,
 
     @NotEmpty(message = "Username is not empty")
-    String fullName;
+    String fullName
+) {
 }

@@ -11,7 +11,7 @@ import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.LoginRequest;
-import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
+import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.request.UserRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
@@ -25,8 +25,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,7 +58,7 @@ public class AuthController {
     }
 
     @PutMapping("/auth/forgot")
-    public ResponseEntity<UserResponse> forgotUserPassword(@RequestBody UpdateUserRequest request){
+    public ResponseEntity<UserResponse> forgotUserPassword(@RequestBody UpdateInfoRequest request){
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

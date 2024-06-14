@@ -11,7 +11,7 @@ import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.ChangePasswordRequest;
-import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
+import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.service.UserService;
 import jakarta.validation.Valid;
@@ -41,7 +41,7 @@ public class UserController {
 
     @PutMapping(Endpoint.V1.User.UPDATE_INFO)
     public ResponseEntity<GlobalResponse<Meta, UserResponse>> updateInfo(
-            @RequestBody UpdateUserRequest request,
+            @RequestBody UpdateInfoRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     ){
         return ResponseEntity

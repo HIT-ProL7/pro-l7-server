@@ -10,11 +10,10 @@ package com.example.hitproduct.service;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.LoginRequest;
-import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
+import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.request.UserRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public interface AuthService {
@@ -23,5 +22,5 @@ public interface AuthService {
 
     GlobalResponse<Meta, AuthResponse> login(LoginRequest loginRequest);
 
-    UserResponse forgotPassword(@RequestBody UpdateUserRequest request);
+    UserResponse forgotPassword(@RequestBody UpdateInfoRequest request);
 }

@@ -10,16 +10,15 @@ package com.example.hitproduct.service;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.ChangePasswordRequest;
-import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
+import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService {
 
     GlobalResponse<Meta, UserResponse> getUser(UserDetails userDetails);
 
-    GlobalResponse<Meta, UserResponse> updateUser(UpdateUserRequest request, UserDetails userDetails);
+    GlobalResponse<Meta, UserResponse> updateUser(UpdateInfoRequest request, UserDetails userDetails);
 
     GlobalResponse<Meta, UserResponse> changePassword(ChangePasswordRequest request, UserDetails userDetails);
 }

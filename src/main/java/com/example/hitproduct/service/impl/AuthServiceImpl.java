@@ -12,7 +12,7 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.domain.dto.request.LoginRequest;
-import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
+import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.request.UserRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
@@ -103,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserResponse forgotPassword(UpdateUserRequest request) {
+    public UserResponse forgotPassword(UpdateInfoRequest request) {
         return null;
     }
 

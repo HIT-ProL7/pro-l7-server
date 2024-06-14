@@ -12,7 +12,7 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.domain.dto.request.ChangePasswordRequest;
-import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
+import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.UserMapper;
@@ -52,14 +52,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GlobalResponse<Meta, UserResponse> updateUser(
-            UpdateUserRequest request,
+            UpdateInfoRequest request,
             UserDetails userDetails
     ) {
         String username = userDetails.getUsername();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
+
+        if (request.fullName() != null) user.setFullName(request.fullName());
+        if (request.email() != null) user.setEmail(request.email());
+        
         return GlobalResponse
                 .<Meta, UserResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
