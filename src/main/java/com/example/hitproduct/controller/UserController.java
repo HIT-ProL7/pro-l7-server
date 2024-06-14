@@ -10,9 +10,11 @@ package com.example.hitproduct.controller;
 import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
+import com.example.hitproduct.domain.dto.request.ChangePasswordRequest;
 import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,10 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class UserController {
     UserService userService;
 
     @GetMapping(Endpoint.V1.User.ME)
-    public ResponseEntity<GlobalResponse<Meta, UserResponse>> getUser(
+    public ResponseEntity<GlobalResponse<Meta, UserResponse>> getMe(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         return ResponseEntity
@@ -41,12 +40,22 @@ public class UserController {
     }
 
     @PutMapping(Endpoint.V1.User.UPDATE_INFO)
-    public ResponseEntity<GlobalResponse<Meta, UserResponse>> updatedUser(
+    public ResponseEntity<GlobalResponse<Meta, UserResponse>> updateInfo(
             @RequestBody UpdateUserRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     ){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userService.updateUser(request, userDetails));
+    }
+
+    @PatchMapping(Endpoint.V1.User.CHANGE_PASSWORD)
+    public ResponseEntity<GlobalResponse<Meta, UserResponse>> changePassword(
+            @RequestBody @Valid ChangePasswordRequest request,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userService.changePassword(request, userDetails));
     }
 }

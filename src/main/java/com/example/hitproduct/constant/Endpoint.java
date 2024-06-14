@@ -9,7 +9,8 @@ public interface Endpoint {
             String PREFIX = V1.PREFIX + "/users";
             String ME = PREFIX + "/me";
             String GET_LIST = PREFIX;
-            String UPDATE_INFO = PREFIX + "/update";
+            String UPDATE_INFO = PREFIX + "/update-info";
+            String CHANGE_PASSWORD = PREFIX + "/change-password";
         }
 
         interface Auth {

@@ -11,10 +11,12 @@ import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
+import com.example.hitproduct.domain.dto.request.ChangePasswordRequest;
 import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.UserMapper;
+import com.example.hitproduct.exception.AppException;
 import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.service.UserService;
 import lombok.AccessLevel;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     @Override
     public GlobalResponse<Meta, UserResponse> getUser(
@@ -65,9 +68,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Not found user with " + username));
+    public GlobalResponse<Meta, UserResponse> changePassword(
+            ChangePasswordRequest request,
+            UserDetails userDetails
+    ) {
+        if (!request.newPassword().equals(request.confirmNewPassword()))
+            throw new AppException(ErrorMessage.User.MISMATCHED_CONFIRM_PASSWORD);
+
+        User foundUser = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        if (!passwordEncoder.matches(request.oldPassword(), foundUser.getPassword()))
+            throw new AppException(ErrorMessage.User.MISMATCHED_OLD_PASSWORD);
+
+        foundUser.setPassword(passwordEncoder.encode(request.newPassword()));
+
+        return GlobalResponse
+                .<Meta, UserResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(userMapper.toUserResponse(userRepository.save(foundUser)))
+                .build();
     }
 }
