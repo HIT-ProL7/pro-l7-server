@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 
         if (request.fullName() != null) user.setFullName(request.fullName());
         if (request.email() != null) user.setEmail(request.email());
-        
+
         return GlobalResponse
                 .<Meta, UserResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
