@@ -16,25 +16,25 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserAlreadyExistsException extends RuntimeException {
+public class AlreadyExistsException extends RuntimeException {
     String message;
     HttpStatus status;
     String[] params;
 
-    public UserAlreadyExistsException(String message) {
+    public AlreadyExistsException(String message) {
         super(message);
         this.message = message;
         this.status = HttpStatus.BAD_REQUEST;
     }
 
-    public UserAlreadyExistsException(String message, String message1, HttpStatus status, String[] params) {
+    public AlreadyExistsException(String message, String message1, HttpStatus status, String[] params) {
         super(message);
         this.message = message1;
         this.status = status;
         this.params = params;
     }
 
-    public UserAlreadyExistsException(String message, String[] params) {
+    public AlreadyExistsException(String message, String[] params) {
         super(message);
         this.message = message;
         this.params = params;

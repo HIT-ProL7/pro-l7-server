@@ -7,7 +7,11 @@ package com.example.hitproduct.domain.dto.request;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.ValidationMessage;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,15 +21,17 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRequest {
-    @NotEmpty(message = "Username is not empty")
-    String username;
+    @Size(min = 10, message = ValidationMessage.User.STUDENT_CODE_INVALID)
+    @Pattern(regexp = "\\d+", message = ValidationMessage.User.STUDENT_CODE_NUMERIC)
+    String studentCode;
 
-    @NotEmpty(message = "Username is not empty")
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = ValidationMessage.User.PASSWORD_INVALID)
     String password;
 
     @NotEmpty(message = "Email is not empty")
+    @Email
     String email;
 
-    @NotEmpty(message = "Username is not empty")
+    @NotEmpty(message = "Fullname is not empty")
     String fullName;
 }

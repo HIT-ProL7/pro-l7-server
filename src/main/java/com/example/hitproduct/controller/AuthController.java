@@ -56,9 +56,4 @@ public class AuthController {
                 .status(HttpStatus.OK)
                 .body(authService.login(request));
     }
-
-    @PutMapping("/auth/forgot")
-    public ResponseEntity<UserResponse> forgotUserPassword(@RequestBody UpdateInfoRequest request){
-        return ResponseEntity.status(HttpStatus.OK).body(null);
-    }
 }
