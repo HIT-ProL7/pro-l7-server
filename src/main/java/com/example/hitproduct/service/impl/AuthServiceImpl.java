@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public GlobalResponse<Meta, UserResponse> register(UserRequest userRequest) {
-        if(userRepository.existsByUsername(userRequest.getUsername())){
+        if(userRepository.existsByUsername(userRequest.getStudentCode())){
             throw new AlreadyExistsException(ErrorMessage.Auth.ERR_EXISTS_USERNAME);
         }
         User user = userMapper.toUser(userRequest);
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
     ) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
+                        request.getStudentCode(),
                         request.getPassword()
                 )
         );
