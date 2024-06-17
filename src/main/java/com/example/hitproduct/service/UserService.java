@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserService {
 
-    GlobalResponse<Meta, UserResponse> getUser(UserDetails userDetails);
+    GlobalResponse<Meta, UserResponse> getCurrentUser(UserDetails userDetails);
 
     GlobalResponse<Meta, UserResponse> updateUser(UpdateInfoRequest request, UserDetails userDetails);
 

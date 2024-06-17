@@ -31,12 +31,12 @@ public class UserController {
     UserService userService;
 
     @GetMapping(Endpoint.V1.User.ME)
-    public ResponseEntity<GlobalResponse<Meta, UserResponse>> getMe(
+    public ResponseEntity<GlobalResponse<Meta, UserResponse>> getCurrentUser(
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.getUser(userDetails));
+                .body(userService.getCurrentUser(userDetails));
     }
 
     @PutMapping(Endpoint.V1.User.UPDATE_INFO)

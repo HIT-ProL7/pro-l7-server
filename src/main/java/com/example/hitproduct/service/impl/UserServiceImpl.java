@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public GlobalResponse<Meta, UserResponse> getUser(
+    public GlobalResponse<Meta, UserResponse> getCurrentUser(
             UserDetails userDetails
     ) {
         String username = userDetails.getUsername();
