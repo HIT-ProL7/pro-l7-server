@@ -7,6 +7,7 @@ package com.example.hitproduct.domain.dto.response;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.domain.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,10 +21,12 @@ public class AuthResponse {
     String accessToken;
     String type;
     String roles;
+    UserResponse   loggedInUser;
 
-    public AuthResponse(String accessToken, String type, String roles) {
+    public AuthResponse(String accessToken, String type, String roles, UserResponse user) {
         this.accessToken = accessToken;
         this.type = "Bearer";
         this.roles = roles;
+        this.loggedInUser = user;
     }
 }

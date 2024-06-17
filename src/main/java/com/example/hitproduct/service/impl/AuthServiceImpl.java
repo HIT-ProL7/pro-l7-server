@@ -97,6 +97,7 @@ public class AuthServiceImpl implements AuthService {
                         .builder()
                         .accessToken(accessToken)
                         .roles(roles)
+                        .loggedInUser(UserMapper.INSTANCE.toUserResponse(loggedInUser))
                         .build()
                 )
                 .build();

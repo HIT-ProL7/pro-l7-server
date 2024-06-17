@@ -12,10 +12,18 @@ import com.example.hitproduct.domain.dto.request.UserRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValueCheckStrategy;
+import org.mapstruct.NullValueMappingStrategy;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
     User toUser(UserRequest request);
+
     UserResponse toUserResponse(User user);
+
     User toUser(UpdateInfoRequest request);
 }
