@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
             UserDetails userDetails
     ) {
         String username = userDetails.getUsername();
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByStudentCode(username)
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         return GlobalResponse
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
             UserDetails userDetails
     ) {
         String username = userDetails.getUsername();
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByStudentCode(username)
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         if (request.fullName() != null) user.setFullName(request.fullName());
@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
         if (!request.newPassword().equals(request.confirmNewPassword()))
             throw new AppException(ErrorMessage.User.MISMATCHED_CONFIRM_PASSWORD);
 
-        User foundUser = userRepository.findByUsername(userDetails.getUsername())
+        User foundUser = userRepository.findByStudentCode(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         if (!passwordEncoder.matches(request.oldPassword(), foundUser.getPassword()))
             throw new AppException(ErrorMessage.User.MISMATCHED_OLD_PASSWORD);

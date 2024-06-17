@@ -10,9 +10,9 @@ package com.example.hitproduct.controller;
 import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
+import com.example.hitproduct.domain.dto.request.AddUserRequest;
 import com.example.hitproduct.domain.dto.request.LoginRequest;
 import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
-import com.example.hitproduct.domain.dto.request.UserRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.mapper.UserMapper;
@@ -41,7 +41,7 @@ public class AuthController {
 
     @PostMapping(Endpoint.V1.Auth.REGISTER)
     public ResponseEntity<GlobalResponse<Meta, UserResponse>> registerUser(
-            @RequestBody @Valid UserRequest request
+            @RequestBody @Valid AddUserRequest request
     ){
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -8,20 +8,17 @@ package com.example.hitproduct.domain.mapper;
  */
 
 import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
-import com.example.hitproduct.domain.dto.request.UserRequest;
+import com.example.hitproduct.domain.dto.request.AddUserRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValueCheckStrategy;
-import org.mapstruct.NullValueMappingStrategy;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    User toUser(UserRequest request);
+    User toUser(AddUserRequest request);
 
     UserResponse toUserResponse(User user);
 

@@ -11,14 +11,14 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.LoginRequest;
 import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
-import com.example.hitproduct.domain.dto.request.UserRequest;
+import com.example.hitproduct.domain.dto.request.AddUserRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public interface AuthService {
 
-    GlobalResponse<Meta, UserResponse> register(UserRequest userRequest);
+    GlobalResponse<Meta, UserResponse> register(AddUserRequest userRequest);
 
     GlobalResponse<Meta, AuthResponse> login(LoginRequest loginRequest);
 

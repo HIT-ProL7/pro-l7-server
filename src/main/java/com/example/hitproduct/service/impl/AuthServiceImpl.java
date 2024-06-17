@@ -11,9 +11,9 @@ import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
+import com.example.hitproduct.domain.dto.request.AddUserRequest;
 import com.example.hitproduct.domain.dto.request.LoginRequest;
 import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
-import com.example.hitproduct.domain.dto.request.UserRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Role;
@@ -48,8 +48,8 @@ public class AuthServiceImpl implements AuthService {
     JwtUtils jwtUtils;
 
     @Override
-    public GlobalResponse<Meta, UserResponse> register(UserRequest userRequest) {
-        if(userRepository.existsByUsername(userRequest.getUsername())){
+    public GlobalResponse<Meta, UserResponse> register(AddUserRequest userRequest) {
+        if(userRepository.existsByStudentCode(userRequest.getStudentCode())){
             throw new UserAlreadyExistsException(ErrorMessage.Auth.ERR_EXISTS_USERNAME);
         }
         User user = userMapper.toUser(userRequest);
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
     ) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
+                        request.getStudentCode(),
                         request.getPassword()
                 )
         );

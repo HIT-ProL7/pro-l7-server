@@ -1,7 +1,6 @@
 package com.example.hitproduct.config;
 
 import com.example.hitproduct.repository.UserRepository;
-import com.example.hitproduct.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +20,7 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username ->
-                userRepository.findByUsername(username)
+                userRepository.findByStudentCode(username)
                         .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 

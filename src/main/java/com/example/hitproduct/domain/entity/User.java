@@ -38,7 +38,7 @@ public class User implements UserDetails {
     String id;
 
     @Column(nullable = false, unique = true)
-    String username;
+    String studentCode;
 
     @Column(nullable = false)
     @JsonIgnore
@@ -49,6 +49,8 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     String fullName;
+
+    String avatarUrl;
 
     @CreationTimestamp
     Timestamp createdAt;
@@ -67,6 +69,11 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(this.getRole().getName());
         return Collections.singleton(grantedAuthority);
+    }
+
+    @Override
+    public String getUsername() {
+        return studentCode;
     }
 
     @Override
