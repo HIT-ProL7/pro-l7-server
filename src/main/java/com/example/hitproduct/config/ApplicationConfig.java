@@ -19,18 +19,18 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username ->
-                userRepository.findByStudentCode(username)
-                        .orElseThrow(() -> new UsernameNotFoundException(username));
+        return studentCode ->
+                userRepository.findByStudentCode(studentCode)
+                              .orElseThrow(() -> new UsernameNotFoundException(studentCode));
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(){
+    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(passwordEncoder());

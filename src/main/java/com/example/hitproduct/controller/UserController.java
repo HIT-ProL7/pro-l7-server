@@ -36,17 +36,17 @@ public class UserController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.getCurrentUser(userDetails));
+                .body(userService.getUserByStudentCode(userDetails.getUsername()));
     }
 
     @PutMapping(Endpoint.V1.User.UPDATE_INFO)
     public ResponseEntity<GlobalResponse<Meta, UserResponse>> updateInfo(
             @RequestBody UpdateInfoRequest request,
             @AuthenticationPrincipal UserDetails userDetails
-    ){
+    ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.updateUser(request, userDetails));
+                .body(userService.updateUser(userDetails.getUsername(), request));
     }
 
     @PatchMapping(Endpoint.V1.User.CHANGE_PASSWORD)
@@ -56,6 +56,6 @@ public class UserController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(userService.changePassword(request, userDetails));
+                .body(userService.changePassword(userDetails.getUsername(), request));
     }
 }

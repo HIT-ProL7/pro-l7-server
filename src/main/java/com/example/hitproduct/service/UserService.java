@@ -16,9 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserService {
 
-    GlobalResponse<Meta, UserResponse> getCurrentUser(UserDetails userDetails);
+    GlobalResponse<Meta, UserResponse> getUserByStudentCode(String studentCode);
 
-    GlobalResponse<Meta, UserResponse> updateUser(UpdateInfoRequest request, UserDetails userDetails);
+    GlobalResponse<Meta, UserResponse> updateUser(String studentCode, UpdateInfoRequest request);
 
-    GlobalResponse<Meta, UserResponse> changePassword(ChangePasswordRequest request, UserDetails userDetails);
+    GlobalResponse<Meta, UserResponse> changePassword(String studentCode, ChangePasswordRequest request);
 }

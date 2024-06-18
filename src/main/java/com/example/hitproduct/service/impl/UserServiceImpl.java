@@ -31,17 +31,16 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    UserRepository userRepository;
-    UserMapper userMapper;
+    UserRepository  userRepository;
+    UserMapper      userMapper;
     PasswordEncoder passwordEncoder;
 
     @Override
-    public GlobalResponse<Meta, UserResponse> getCurrentUser(
-            UserDetails userDetails
+    public GlobalResponse<Meta, UserResponse> getUserByStudentCode(
+            String studentCode
     ) {
-        String username = userDetails.getUsername();
-        User user = userRepository.findByStudentCode(username)
-                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        User user = userRepository.findByStudentCode(studentCode)
+                                  .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         return GlobalResponse
                 .<Meta, UserResponse>builder()
@@ -52,12 +51,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GlobalResponse<Meta, UserResponse> updateUser(
-            UpdateInfoRequest request,
-            UserDetails userDetails
+            String studentCode,
+            UpdateInfoRequest request
     ) {
-        String username = userDetails.getUsername();
-        User user = userRepository.findByStudentCode(username)
-                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        User user = userRepository.findByStudentCode(studentCode)
+                                  .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         if (request.fullName() != null) user.setFullName(request.fullName());
         if (request.email() != null) user.setEmail(request.email());
@@ -71,14 +69,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public GlobalResponse<Meta, UserResponse> changePassword(
-            ChangePasswordRequest request,
-            UserDetails userDetails
+            String studentCode,
+            ChangePasswordRequest request
     ) {
         if (!request.newPassword().equals(request.confirmNewPassword()))
             throw new AppException(ErrorMessage.User.MISMATCHED_CONFIRM_PASSWORD);
 
-        User foundUser = userRepository.findByStudentCode(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        User foundUser = userRepository.findByStudentCode(studentCode)
+                                       .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         if (!passwordEncoder.matches(request.oldPassword(), foundUser.getPassword()))
             throw new AppException(ErrorMessage.User.MISMATCHED_OLD_PASSWORD);
 

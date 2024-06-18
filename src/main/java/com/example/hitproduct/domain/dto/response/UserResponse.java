@@ -18,9 +18,9 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
-    String username;
-    String fullName;
-    String email;
+    String    studentCode;
+    String    fullName;
+    String    email;
     Timestamp createdAt;
     Timestamp updatedAt;
 }
