@@ -7,15 +7,20 @@ package com.example.hitproduct.domain.mapper;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
-import com.example.hitproduct.domain.dto.request.UpdateUserRequest;
-import com.example.hitproduct.domain.dto.request.UserRequest;
+import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
+import com.example.hitproduct.domain.dto.request.AddUserRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    User toUser(UserRequest request);
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
+    User toUser(AddUserRequest request);
+
     UserResponse toUserResponse(User user);
-    User toUser(UpdateUserRequest request);
+
+    User toUser(UpdateInfoRequest request);
 }

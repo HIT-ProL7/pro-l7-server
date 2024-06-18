@@ -7,14 +7,21 @@ package com.example.hitproduct.domain.entity;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,7 +30,7 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
@@ -31,9 +38,10 @@ public class User {
     String id;
 
     @Column(nullable = false, unique = true)
-    String username;
+    String studentCode;
 
     @Column(nullable = false)
+    @JsonIgnore
     String password;
 
     @Column(nullable = false)
@@ -41,6 +49,8 @@ public class User {
 
     @Column(nullable = false)
     String fullName;
+
+    String avatarUrl;
 
     @CreationTimestamp
     Timestamp createdAt;
@@ -54,4 +64,35 @@ public class User {
     }, fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(this.getRole().getName());
+        return Collections.singleton(grantedAuthority);
+    }
+
+    @Override
+    public String getUsername() {
+        return studentCode;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
 }

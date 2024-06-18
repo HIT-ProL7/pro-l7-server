@@ -7,12 +7,14 @@ package com.example.hitproduct.constant;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
-public class ErrorMessage {
-    public static class Auth{
-        public static String ERR_EXISTS_USERNAME = "exception.user.exist";
+public interface ErrorMessage {
+    interface Auth{
+        String ERR_EXISTS_USERNAME = "exception.user.exist";
     }
 
-    public static class User{
-        public static String ERR_NOT_FOUND = "exception.user.notFound";
+    interface User {
+        String ERR_NOT_FOUND = "exception.user.notFound";
+        String MISMATCHED_CONFIRM_PASSWORD = "exception.user.mismatched-confirm-password";
+        String MISMATCHED_OLD_PASSWORD  = "exception.user.mismatched-old-password";
     }
 }

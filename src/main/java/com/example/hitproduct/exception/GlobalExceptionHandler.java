@@ -9,6 +9,11 @@ package com.example.hitproduct.exception;
 
 import com.example.hitproduct.base.RestData;
 import com.example.hitproduct.base.VsResponseUtil;
+import com.example.hitproduct.domain.dto.global.BlankData;
+import com.example.hitproduct.domain.dto.global.GlobalResponse;
+import com.example.hitproduct.domain.dto.global.Meta;
+import com.example.hitproduct.domain.dto.global.Status;
+import com.example.hitproduct.util.MessageSourceUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -27,6 +32,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GlobalExceptionHandler {
     private final MessageSource messageSource;
+    private final MessageSourceUtil messageSourceUtil;
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<RestData<?>> handleUserAlreadyExistsException(UserAlreadyExistsException ex){
@@ -40,5 +46,20 @@ public class GlobalExceptionHandler {
         String message = messageSource.getMessage(ex.getMessage(), null, LocaleContextHolder.getLocale());
         log.error(message, ex);
         return VsResponseUtil.error(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleAppException(AppException ex){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(GlobalResponse
+                        .<Meta, BlankData>builder()
+                        .meta(Meta.builder()
+                                .status(Status.ERROR)
+                                .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                .build()
+                        )
+                        .build()
+                );
     }
 }

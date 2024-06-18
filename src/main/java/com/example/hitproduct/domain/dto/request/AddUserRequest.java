@@ -16,9 +16,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserRequest {
-    @NotEmpty(message = "Username is not empty")
-    String username;
+public class AddUserRequest {
+    @NotEmpty(message = "Student code is not empty")
+    String studentCode;
 
     @NotEmpty(message = "Username is not empty")
     String password;

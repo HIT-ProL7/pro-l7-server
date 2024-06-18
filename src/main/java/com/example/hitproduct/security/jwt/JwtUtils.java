@@ -7,7 +7,7 @@ package com.example.hitproduct.security.jwt;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
-import com.example.hitproduct.security.user.UserDetailsImpl;
+import com.example.hitproduct.domain.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -33,12 +33,12 @@ public class JwtUtils {
     private int jwtExpirationTime;
 
     public String generateJwtTokenForUser(Authentication authentication){
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userPrincipal.getAuthorities()
+        User loggedInUser = (User) authentication.getPrincipal();
+        List<String> roles = loggedInUser.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-        return Jwts.builder().setSubject(userPrincipal.getUsername())
+        return Jwts.builder().setSubject(loggedInUser.getUsername())
                 .claim("role",roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationTime))

@@ -7,26 +7,26 @@ package com.example.hitproduct.domain.dto.response;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.domain.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class JwtResponse {
-    String id;
-    String email;
-    String jwt;
-    String type = "Bearer";
+@Builder
+public class AuthResponse {
+    String accessToken;
+    String type;
     String roles;
+    UserResponse   loggedInUser;
 
-    public JwtResponse(String id, String email, String jwt, String roles) {
-        this.id = id;
-        this.email = email;
-        this.jwt = jwt;
+    public AuthResponse(String accessToken, String type, String roles, UserResponse user) {
+        this.accessToken = accessToken;
+        this.type = "Bearer";
         this.roles = roles;
+        this.loggedInUser = user;
     }
 }
