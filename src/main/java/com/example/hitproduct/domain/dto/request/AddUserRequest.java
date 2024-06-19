@@ -21,8 +21,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddUserRequest {
-    @Size(min = 10, message = ValidationMessage.User.STUDENT_CODE_INVALID)
-    @Pattern(regexp = "\\d+", message = ValidationMessage.User.STUDENT_CODE_NUMERIC)
+    @Pattern(regexp = "\\d{10}", message = ValidationMessage.User.STUDENT_CODE_INVALID)
     String studentCode;
 
     @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", message = ValidationMessage.User.PASSWORD_INVALID)

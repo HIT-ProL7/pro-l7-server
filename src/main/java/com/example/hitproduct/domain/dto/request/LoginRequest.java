@@ -21,7 +21,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LoginRequest {
     @NotEmpty(message = "This field cannot empty")
-    @Size(min = 10, message = ValidationMessage.Login.STUDENT_CODE_INVALID)
+    @Pattern(regexp = "\\d{10}", message = ValidationMessage.User.STUDENT_CODE_INVALID)
     String studentCode;
 
     @NotEmpty(message = "This field cannot empty")
