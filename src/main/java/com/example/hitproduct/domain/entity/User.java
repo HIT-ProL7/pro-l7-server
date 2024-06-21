@@ -65,6 +65,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "role_id")
     Role role;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Position> positions;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(this.getRole().getName());
