@@ -58,12 +58,16 @@ public class User implements UserDetails {
     @UpdateTimestamp
     Timestamp updatedAt;
 
-    @ManyToOne(cascade = {
-            CascadeType.MERGE,
-            CascadeType.DETACH
-    }, fetch = FetchType.EAGER)
+    @ManyToOne(
+            cascade = {
+                    CascadeType.MERGE,
+                    CascadeType.DETACH
+            }, fetch = FetchType.EAGER
+    )
     @JoinColumn(name = "role_id")
     Role role;
+
+    Integer resetPasswordCount;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
