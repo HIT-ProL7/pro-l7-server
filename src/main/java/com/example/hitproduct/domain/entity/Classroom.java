@@ -42,6 +42,9 @@ public class Classroom {
     @UpdateTimestamp
     Timestamp updatedAt;
 
+    @Column(nullable = false)
+    boolean status;
+
     @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Position> positions;
 }
