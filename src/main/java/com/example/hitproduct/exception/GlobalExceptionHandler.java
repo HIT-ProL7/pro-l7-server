@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
     private final MessageSource messageSource;
     private final MessageSourceUtil messageSourceUtil;
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<RestData<?>> handleUserAlreadyExistsException(UserAlreadyExistsException ex){
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<RestData<?>> handleUserAlreadyExistsException(AlreadyExistsException ex){
         String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());
         log.error(message, ex);
         return VsResponseUtil.error(ex.getStatus(), message);

@@ -19,7 +19,7 @@ import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Role;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.UserMapper;
-import com.example.hitproduct.exception.UserAlreadyExistsException;
+import com.example.hitproduct.exception.AlreadyExistsException;
 import com.example.hitproduct.repository.RoleRepository;
 import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.security.jwt.JwtUtils;
@@ -50,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public GlobalResponse<Meta, UserResponse> register(AddUserRequest userRequest) {
         if(userRepository.existsByStudentCode(userRequest.getStudentCode())){
-            throw new UserAlreadyExistsException(ErrorMessage.Auth.ERR_EXISTS_USERNAME);
+            throw new AlreadyExistsException(ErrorMessage.Auth.ERR_EXISTS_USERNAME);
         }
         User user = userMapper.toUser(userRequest);
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));

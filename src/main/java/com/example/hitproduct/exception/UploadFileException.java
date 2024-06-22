@@ -1,8 +1,8 @@
 package com.example.hitproduct.exception;
 /*
  * @author HongAnh
- * @created 14 / 06 / 2024 - 6:57 PM
- * @project HitProduct
+ * @created 21 / 06 / 2024 - 11:02 AM
+ * @project pro-l7-server
  * @social Github: https://github.com/lehonganh0201
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
@@ -16,25 +16,25 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserAlreadyExistsException extends RuntimeException {
+public class UploadFileException extends RuntimeException {
     String message;
     HttpStatus status;
     String[] params;
 
-    public UserAlreadyExistsException(String message) {
+    public UploadFileException(String message) {
         super(message);
         this.message = message;
         this.status = HttpStatus.BAD_REQUEST;
     }
 
-    public UserAlreadyExistsException(String message, String message1, HttpStatus status, String[] params) {
+    public UploadFileException(String message, String message1, HttpStatus status, String[] params) {
         super(message);
         this.message = message1;
         this.status = status;
         this.params = params;
     }
 
-    public UserAlreadyExistsException(String message, String[] params) {
+    public UploadFileException(String message, String[] params) {
         super(message);
         this.message = message;
         this.params = params;
