@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.security.SecureRandom;
+
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
@@ -42,5 +44,10 @@ public class ApplicationConfig {
             AuthenticationConfiguration configuration
     ) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecureRandom secureRandom() {
+        return new SecureRandom();
     }
 }
