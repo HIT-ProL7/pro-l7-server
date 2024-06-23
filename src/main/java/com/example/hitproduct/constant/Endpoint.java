@@ -18,5 +18,10 @@ public interface Endpoint {
             String REGISTER = PREFIX + "/register";
             String LOGIN = PREFIX + "/login";
         }
+
+        interface Classroom{
+            String PREFIX = V1.PREFIX + "/classrooms";
+            String CREATE = PREFIX + "/create";
+        }
     }
 }

@@ -53,9 +53,9 @@ public class WebSecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(Endpoint.V1.Auth.REGISTER).hasRole("ADMIN")
-                        .requestMatchers(Endpoint.V1.Auth.PREFIX + CATCH_ALL_WILDCARD).permitAll()
-                        .anyRequest().authenticated()
+                    .requestMatchers(Endpoint.V1.Auth.PREFIX + CATCH_ALL_WILDCARD).permitAll()
+                    .requestMatchers(Endpoint.V1.Auth.REGISTER, Endpoint.V1.Classroom.CREATE).hasRole("ADMIN")
+                    .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
