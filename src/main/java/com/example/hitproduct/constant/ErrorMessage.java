@@ -17,4 +17,8 @@ public interface ErrorMessage {
         String MISMATCHED_CONFIRM_PASSWORD = "exception.user.mismatched-confirm-password";
         String MISMATCHED_OLD_PASSWORD  = "exception.user.mismatched-old-password";
     }
+
+    interface Classroom{
+        String ERR_EXISTS_CLASSNAME = "exception.class.exist";
+    }
 }
