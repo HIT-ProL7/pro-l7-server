@@ -7,20 +7,20 @@ package com.example.hitproduct.service.impl;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
-import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
+import com.example.hitproduct.exception.AlreadyExistsException;
 import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.service.ClassroomService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +33,10 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request) {
+
+        if(classroomRepository.existsByName(request.getName())){
+            throw new AlreadyExistsException(ErrorMessage.Classroom.ERR_EXISTS_CLASSNAME);
+        }
         Classroom classroom = classroomMapper.toClassroom(request);
         classroom.setStatus(true);
 
