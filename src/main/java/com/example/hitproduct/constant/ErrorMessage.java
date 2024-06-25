@@ -16,9 +16,11 @@ public interface ErrorMessage {
         String ERR_NOT_FOUND = "exception.user.notFound";
         String MISMATCHED_CONFIRM_PASSWORD = "exception.user.mismatched-confirm-password";
         String MISMATCHED_OLD_PASSWORD  = "exception.user.mismatched-old-password";
+        String UNAUTHORIZED = "exception.user.unauthorized";
     }
 
     interface Classroom{
         String ERR_EXISTS_CLASSNAME = "exception.class.exist";
+        String ERR_NOTFOUND_BY_ID = "exception.class.notfound";
     }
 }

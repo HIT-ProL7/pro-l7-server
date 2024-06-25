@@ -17,6 +17,7 @@ import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Role;
+import com.example.hitproduct.domain.entity.RoleType;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
@@ -56,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
         Role role = Role.builder()
-                .id(1L)
+                .id(2L)
                 .name("ROLE_USER")
                 .build();
 

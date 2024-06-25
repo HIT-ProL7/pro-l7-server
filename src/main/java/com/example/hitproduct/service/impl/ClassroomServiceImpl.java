@@ -11,17 +11,28 @@ import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
+import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
 import com.example.hitproduct.domain.entity.Classroom;
+import com.example.hitproduct.domain.entity.Position;
+import com.example.hitproduct.domain.entity.SeatRole;
+import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
+import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
+import com.example.hitproduct.repository.PositionRepository;
+import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.service.ClassroomService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +41,8 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomRepository classroomRepository;
     ClassroomMapper classroomMapper;
+    UserRepository userRepository;
+    PositionRepository positionRepository;
 
     @Override
     public GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request) {
@@ -46,6 +59,57 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .<Meta, ClassroomResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(classroomMapper.toClassroomResponse(classroom))
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public GlobalResponse<Meta, String> addMember(AddMemberRequest request, String studentCode) {
+        if(request.getSeatRole().equals(SeatRole.LEADER)){
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
+
+        Optional<Classroom> classroomOptional = classroomRepository.findById(request.getClassroomId());
+        if(classroomOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
+        }
+
+        Classroom classroom = classroomOptional.get();
+
+        Optional<User> userOptional = userRepository.findByStudentCode(studentCode);
+
+        if(userOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        User currentUser = userOptional.get();
+
+        boolean isLeader = classroom.getPositions().stream()
+                .anyMatch(position -> position.getUser().equals(currentUser)
+                        && position.getSeatRole().equals(SeatRole.LEADER));
+
+        if(!isLeader){
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
+
+        Optional<User> newUserOpt = userRepository.findByStudentCode(request.getStudentCode());
+        if (newUserOpt.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        User newUser = newUserOpt.get();
+
+        Position position = Position.builder()
+                .user(newUser)
+                .classroom(classroom)
+                .seatRole(request.getSeatRole())
+                .build();
+
+        positionRepository.save(position);
+        return GlobalResponse
+                .<Meta, String>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data("Member added successfully!")
                 .build();
     }
 }
