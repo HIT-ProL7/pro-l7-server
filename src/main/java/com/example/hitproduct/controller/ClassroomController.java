@@ -11,6 +11,7 @@ package com.example.hitproduct.controller;
 import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
+import com.example.hitproduct.domain.dto.request.AddLeaderRequest;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
@@ -45,5 +46,12 @@ public class ClassroomController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(classroomService.addMember(request, userDetails.getUsername()));
+    }
+
+    @PostMapping(Endpoint.V1.Classroom.ADD_LEADER)
+    public ResponseEntity<GlobalResponse<Meta, String>> addLeader(@RequestBody AddLeaderRequest request){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(classroomService.addLeader(request));
     }
 }

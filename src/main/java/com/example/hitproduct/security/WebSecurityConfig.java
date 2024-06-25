@@ -54,7 +54,7 @@ public class WebSecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(Endpoint.V1.Auth.PREFIX + CATCH_ALL_WILDCARD).permitAll()
-                    .requestMatchers(Endpoint.V1.Auth.REGISTER, Endpoint.V1.Classroom.CREATE).hasRole("ADMIN")
+                    .requestMatchers(Endpoint.V1.Auth.REGISTER, Endpoint.V1.Classroom.CREATE, Endpoint.V1.Classroom.ADD_LEADER).hasRole("ADMIN")
                     .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)

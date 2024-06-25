@@ -11,6 +11,7 @@ import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
+import com.example.hitproduct.domain.dto.request.AddLeaderRequest;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
@@ -110,6 +111,36 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .<Meta, String>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data("Member added successfully!")
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, String> addLeader(AddLeaderRequest request) {
+        Optional<Classroom> classroomOptional = classroomRepository.findById(request.getClassroomId());
+        if(classroomOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
+        }
+
+        Classroom classroom = classroomOptional.get();
+        Optional<User> userOptional = userRepository.findByStudentCode(request.getStudentCode());
+
+        if(userOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        User user = userOptional.get();
+
+        Position position = Position.builder()
+                .classroom(classroom)
+                .user(user)
+                .seatRole(SeatRole.LEADER)
+                .build();
+
+        positionRepository.save(position);
+        return GlobalResponse
+                .<Meta,String>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data("Leader added successfully!")
                 .build();
     }
 }
