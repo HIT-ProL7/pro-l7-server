@@ -47,7 +47,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request) {
 
-        if(classroomRepository.existsByName(request.getName())){
+        if (classroomRepository.existsByName(request.getName())) {
             throw new AlreadyExistsException(ErrorMessage.Classroom.ERR_EXISTS_CLASSNAME);
         }
         Classroom classroom = classroomMapper.toClassroom(request);
@@ -64,13 +64,13 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     @Transactional
-    public GlobalResponse<Meta, String> addMember(AddMemberRequest request, String studentCode) {
-        if(request.getSeatRole().equals(SeatRole.LEADER)){
+    public GlobalResponse<Meta, String> addMember(Long classroomId, AddMemberRequest request, String studentCode) {
+        if (request.getSeatRole().equals(SeatRole.LEADER)) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
-        Optional<Classroom> classroomOptional = classroomRepository.findById(request.getClassroomId());
-        if(classroomOptional.isEmpty()){
+        Optional<Classroom> classroomOptional = classroomRepository.findById(classroomId);
+        if (classroomOptional.isEmpty()) {
             throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
         }
 
@@ -78,7 +78,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         Optional<User> userOptional = userRepository.findByStudentCode(studentCode);
 
-        if(userOptional.isEmpty()){
+        if (userOptional.isEmpty()) {
             throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
         }
 
@@ -88,7 +88,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .anyMatch(position -> position.getUser().equals(currentUser)
                         && position.getSeatRole().equals(SeatRole.LEADER));
 
-        if(!isLeader){
+        if (!isLeader) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
@@ -99,11 +99,20 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         User newUser = newUserOpt.get();
 
-        Position position = Position.builder()
-                .user(newUser)
-                .classroom(classroom)
-                .seatRole(request.getSeatRole())
-                .build();
+        Position position = null;
+        if (request.getSeatRole() != null) {
+            position = Position.builder()
+                    .user(newUser)
+                    .classroom(classroom)
+                    .seatRole(request.getSeatRole())
+                    .build();
+        } else {
+            position = Position.builder()
+                    .user(newUser)
+                    .classroom(classroom)
+                    .seatRole(SeatRole.MEMBER)
+                    .build();
+        }
 
         positionRepository.save(position);
         return GlobalResponse

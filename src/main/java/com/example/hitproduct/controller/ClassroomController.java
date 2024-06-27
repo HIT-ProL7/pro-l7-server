@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,9 +42,9 @@ public class ClassroomController {
     }
 
     @PostMapping(Endpoint.V1.Classroom.ADD_MEMBER)
-    public ResponseEntity<GlobalResponse<Meta, String>> addMember(@RequestBody AddMemberRequest request, @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<GlobalResponse<Meta, String>> addMember(@PathVariable(name = "classroomId") Long id, @RequestBody AddMemberRequest request,  @AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(classroomService.addMember(request, userDetails.getUsername()));
+                .body(classroomService.addMember(id, request, userDetails.getUsername()));
     }
 }
