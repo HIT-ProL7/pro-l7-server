@@ -42,7 +42,9 @@ public class ClassroomController {
     }
 
     @PostMapping(Endpoint.V1.Classroom.ADD_MEMBER)
-    public ResponseEntity<GlobalResponse<Meta, String>> addMember(@PathVariable(name = "classroomId") Long id, @RequestBody AddMemberRequest request,  @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<GlobalResponse<Meta, String>> addMember(@PathVariable(name = "classroomId") Long id,
+                                                                  @RequestBody AddMemberRequest request,
+                                                                  @AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(classroomService.addMember(id, request, userDetails.getUsername()));

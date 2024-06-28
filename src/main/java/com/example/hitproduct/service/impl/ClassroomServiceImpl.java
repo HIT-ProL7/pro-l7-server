@@ -65,10 +65,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     @Transactional
     public GlobalResponse<Meta, String> addMember(Long classroomId, AddMemberRequest request, String studentCode) {
-        if (request.getSeatRole().equals(SeatRole.LEADER)) {
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
-        }
-
         Optional<Classroom> classroomOptional = classroomRepository.findById(classroomId);
         if (classroomOptional.isEmpty()) {
             throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
@@ -88,7 +84,9 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .anyMatch(position -> position.getUser().equals(currentUser)
                         && position.getSeatRole().equals(SeatRole.LEADER));
 
-        if (!isLeader) {
+        boolean isAdmin = currentUser.getRole().getId().equals(1L);
+
+        if (!isAdmin && !isLeader) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
