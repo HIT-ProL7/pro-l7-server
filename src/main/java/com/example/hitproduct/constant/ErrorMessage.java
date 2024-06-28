@@ -10,6 +10,7 @@ package com.example.hitproduct.constant;
 public interface ErrorMessage {
     interface Auth{
         String ERR_EXISTS_USERNAME = "exception.user.exist";
+        String ALREADY_RESET_PASSWORD = "exception.auth.already-reset-password";
     }
 
     interface User {
