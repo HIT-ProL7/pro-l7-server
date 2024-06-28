@@ -84,7 +84,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .anyMatch(position -> position.getUser().equals(currentUser)
                         && position.getSeatRole().equals(SeatRole.LEADER));
 
-        boolean isAdmin = currentUser.getRole().getId().equals(1L);
+        boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
 
         if (!isAdmin && !isLeader) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
