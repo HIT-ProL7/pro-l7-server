@@ -7,6 +7,7 @@ package com.example.hitproduct.service;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.domain.dto.global.BlankData;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.LoginRequest;
@@ -22,5 +23,5 @@ public interface AuthService {
 
     GlobalResponse<Meta, AuthResponse> login(LoginRequest loginRequest);
 
-    UserResponse forgotPassword(@RequestBody UpdateInfoRequest request);
+    GlobalResponse<Meta, BlankData> forgotPassword(String studentCode);
 }

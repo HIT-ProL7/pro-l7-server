@@ -8,14 +8,15 @@ package com.example.hitproduct.constant;
  */
 
 public interface ErrorMessage {
-    interface Auth{
-        String ERR_EXISTS_USERNAME = "exception.user.exist";
+    interface Auth {
+        String ERR_EXISTS_USERNAME    = "exception.user.exist";
+        String ALREADY_RESET_PASSWORD = "exception.auth.already-reset-password";
     }
 
     interface User {
-        String ERR_NOT_FOUND = "exception.user.notFound";
+        String ERR_NOT_FOUND               = "exception.user.notFound";
         String MISMATCHED_CONFIRM_PASSWORD = "exception.user.mismatched-confirm-password";
-        String MISMATCHED_OLD_PASSWORD  = "exception.user.mismatched-old-password";
+        String MISMATCHED_OLD_PASSWORD     = "exception.user.mismatched-old-password";
     }
 
     interface Classroom{
