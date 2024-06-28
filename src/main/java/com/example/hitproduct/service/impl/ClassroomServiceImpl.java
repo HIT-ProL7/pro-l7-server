@@ -13,12 +13,15 @@ import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
-import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
+import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
+import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Position;
 import com.example.hitproduct.domain.entity.SeatRole;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
+import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
@@ -32,7 +35,9 @@ import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,12 +45,14 @@ import java.util.Optional;
 public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomRepository classroomRepository;
-    ClassroomMapper classroomMapper;
     UserRepository userRepository;
     PositionRepository positionRepository;
 
+    ClassroomMapper classroomMapper;
+    UserMapper userMapper;
+
     @Override
-    public GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request) {
+    public GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request) {
 
         if (classroomRepository.existsByName(request.getName())) {
             throw new AlreadyExistsException(ErrorMessage.Classroom.ERR_EXISTS_CLASSNAME);
@@ -56,7 +63,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom = classroomRepository.save(classroom);
 
         return GlobalResponse
-                .<Meta, ClassroomResponse>builder()
+                .<Meta, CreateClassroomResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(classroomMapper.toClassroomResponse(classroom))
                 .build();
@@ -117,6 +124,35 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .<Meta, String>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data("Member added successfully!")
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, GetClassroomResponse> getClassroom(Long id) {
+        Optional<Classroom> classroomOptional = classroomRepository.findById(id);
+        if(classroomOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
+        }
+
+        GetClassroomResponse classroomResponse = classroomMapper.toGetClassroomResponse(classroomOptional.get());
+
+        List<Position> positions = positionRepository.findAllByClassroom(classroomOptional.get());
+
+        List<UserResponse> userResponses = positions.stream()
+                .filter(position -> position.getSeatRole().equals(SeatRole.LEADER))
+                .map(position -> position.getUser().getId())
+                .map(userRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(userMapper::toUserResponse)
+                .collect(Collectors.toList());
+
+        classroomResponse.setUserResponses(userResponses);
+
+        return GlobalResponse
+                .<Meta, GetClassroomResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(classroomResponse)
                 .build();
     }
 }
