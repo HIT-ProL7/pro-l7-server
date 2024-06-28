@@ -161,6 +161,28 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .build();
     }
 
+    @Override
+    public GlobalResponse<Meta, List<GetClassroomResponse>> getMyClassrooms(String studentCode) {
+        Optional<User> userOptional = userRepository.findByStudentCode(studentCode);
+        if(userOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        List<GetClassroomResponse> responses = new ArrayList<>();
+        List<Classroom> classrooms = positionRepository.findClassroomsByUserId(userOptional.get().getId());
+
+        for (Classroom classroom : classrooms){
+            GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
+            responses.add(classroomResponse);
+        }
+
+        return GlobalResponse
+                .<Meta, List<GetClassroomResponse>>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(responses)
+                .build();
+    }
+
     private GetClassroomResponse getClassroomResponse(Classroom classroom){
         GetClassroomResponse classroomResponse = classroomMapper.toGetClassroomResponse(classroom);
         List<Position> positions = positionRepository.findAllByClassroom(classroom);
