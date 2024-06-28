@@ -30,6 +30,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class User implements UserDetails {
     @Id
     @GeneratedValue(generator = "uuid2")
