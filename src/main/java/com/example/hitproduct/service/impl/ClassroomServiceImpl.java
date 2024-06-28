@@ -35,6 +35,7 @@ import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -91,7 +92,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .anyMatch(position -> position.getUser().equals(currentUser)
                         && position.getSeatRole().equals(SeatRole.LEADER));
 
-        boolean isAdmin = currentUser.getRole().getId().equals(1L);
+        boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
 
         if (!isAdmin && !isLeader) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
@@ -134,9 +135,35 @@ public class ClassroomServiceImpl implements ClassroomService {
             throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
         }
 
-        GetClassroomResponse classroomResponse = classroomMapper.toGetClassroomResponse(classroomOptional.get());
+        GetClassroomResponse classroomResponse = getClassroomResponse(classroomOptional.get());
 
-        List<Position> positions = positionRepository.findAllByClassroom(classroomOptional.get());
+        return GlobalResponse
+                .<Meta, GetClassroomResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(classroomResponse)
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms() {
+        List<GetClassroomResponse> responses = new ArrayList<>();
+
+        List<Classroom> classrooms = classroomRepository.findAll();
+
+        for(Classroom classroom : classrooms){
+            responses.add(getClassroomResponse(classroom));
+        }
+
+        return GlobalResponse
+                .<Meta, List<GetClassroomResponse>>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(responses)
+                .build();
+    }
+
+    private GetClassroomResponse getClassroomResponse(Classroom classroom){
+        GetClassroomResponse classroomResponse = classroomMapper.toGetClassroomResponse(classroom);
+        List<Position> positions = positionRepository.findAllByClassroom(classroom);
 
         List<UserResponse> userResponses = positions.stream()
                 .filter(position -> position.getSeatRole().equals(SeatRole.LEADER))
@@ -146,13 +173,8 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .map(Optional::get)
                 .map(userMapper::toUserResponse)
                 .collect(Collectors.toList());
-
         classroomResponse.setUserResponses(userResponses);
 
-        return GlobalResponse
-                .<Meta, GetClassroomResponse>builder()
-                .meta(Meta.builder().status(Status.SUCCESS).build())
-                .data(classroomResponse)
-                .build();
+        return classroomResponse;
     }
 }
