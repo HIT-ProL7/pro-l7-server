@@ -16,5 +16,5 @@ import com.example.hitproduct.domain.dto.response.UserResponse;
 public interface ClassroomService {
     GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request);
 
-    GlobalResponse<Meta, ClassroomResponse> getMembersOfClassroom(Integer classroomId);
+    GlobalResponse<Meta, ClassroomResponse> getMembersOfClassroom(String userId, Integer classroomId);
 }

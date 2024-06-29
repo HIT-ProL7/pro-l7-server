@@ -15,8 +15,11 @@ import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Position;
+import com.example.hitproduct.domain.entity.SeatRole;
+import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
+import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.service.ClassroomService;
@@ -31,12 +34,12 @@ import org.springframework.stereotype.Service;
 public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomRepository classroomRepository;
-    ClassroomMapper classroomMapper;
+    ClassroomMapper     classroomMapper;
 
     @Override
     public GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request) {
 
-        if(classroomRepository.existsByName(request.getName())){
+        if (classroomRepository.existsByName(request.getName())) {
             throw new AlreadyExistsException(ErrorMessage.Classroom.ERR_EXISTS_CLASSNAME);
         }
         Classroom classroom = classroomMapper.toClassroom(request);
@@ -52,10 +55,19 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public GlobalResponse<Meta, ClassroomResponse> getMembersOfClassroom(Integer classroomId) {
+    public GlobalResponse<Meta, ClassroomResponse> getMembersOfClassroom(
+            String userId,
+            Integer classroomId
+    ) {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() ->
                 new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND)
         );
+
+        classroom.getPositions()
+                 .parallelStream()
+                 .filter(item -> item.getUser().getId().equals(userId) && item.getSeatRole().equals(SeatRole.LEADER))
+                 .findFirst()
+                 .orElseThrow(() -> new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN));
 
         return GlobalResponse
                 .<Meta, ClassroomResponse>builder()

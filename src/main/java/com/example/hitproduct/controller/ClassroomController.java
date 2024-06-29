@@ -13,6 +13,7 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.service.ClassroomService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,8 +39,11 @@ public class ClassroomController {
 
     @GetMapping(Endpoint.V1.Classroom.GET_MEMBERS)
     public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> getMembersOfClassroom(
+            @AuthenticationPrincipal User currentUser,
             @PathVariable Integer classroomId
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(classroomService.getMembersOfClassroom(classroomId));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(classroomService.getMembersOfClassroom(currentUser.getId(), classroomId));
     }
 }
