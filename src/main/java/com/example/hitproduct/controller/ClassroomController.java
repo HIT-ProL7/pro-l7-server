@@ -20,9 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,5 +33,12 @@ public class ClassroomController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(classroomService.createClass(request));
+    }
+
+    @GetMapping(Endpoint.V1.Classroom.GET_MEMBERS)
+    public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> getMembersOfClassroom(
+            @PathVariable Integer classroomId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(classroomService.getMembersOfClassroom(classroomId));
     }
 }
