@@ -23,6 +23,7 @@ import java.util.List;
 public class ClassroomResponse {
     String     name;
     String     description;
+    String     roadmap;
     Timestamp  createAt;
     List<User> members;
 }

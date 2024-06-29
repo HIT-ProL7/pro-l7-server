@@ -76,6 +76,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                         .builder()
                         .name(classroom.getName())
                         .description(classroom.getDescription())
+                        .roadmap(classroom.getRoadmap())
                         .createAt(classroom.getCreateAt())
                         .members(classroom.getPositions().parallelStream().map(Position::getUser).toList())
                         .build()
