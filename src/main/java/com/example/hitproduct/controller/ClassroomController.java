@@ -13,6 +13,7 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.service.ClassroomService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -20,9 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,9 +31,19 @@ public class ClassroomController {
     ClassroomService classroomService;
 
     @PostMapping(Endpoint.V1.Classroom.CREATE)
-    public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request){
+    public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(classroomService.createClass(request));
+    }
+
+    @PatchMapping(Endpoint.V1.Classroom.CLOSE)
+    public ResponseEntity<GlobalResponse<Meta, Void>> closeClassroom(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Integer classroomId
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(classroomService.closeClassroom(currentUser.getId(), classroomId));
     }
 }
