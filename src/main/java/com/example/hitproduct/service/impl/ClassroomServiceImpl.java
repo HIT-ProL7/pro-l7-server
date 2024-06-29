@@ -56,18 +56,25 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public GlobalResponse<Meta, ClassroomResponse> getMembersOfClassroom(
-            String userId,
+            User currentUser,
             Integer classroomId
     ) {
         Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() ->
                 new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND)
         );
 
-        classroom.getPositions()
-                 .parallelStream()
-                 .filter(item -> item.getUser().getId().equals(userId) && item.getSeatRole().equals(SeatRole.LEADER))
-                 .findFirst()
-                 .orElseThrow(() -> new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN));
+        boolean canGo = false;
+        if (currentUser.getRole().getName().equals("ROLE_ADMIN")) {
+            canGo = true;
+        }
+
+        if (!canGo) {
+            classroom.getPositions()
+                     .parallelStream()
+                     .filter(item -> item.getUser().getId().equals(currentUser.getId()) && item.getSeatRole().equals(SeatRole.LEADER))
+                     .findFirst()
+                     .orElseThrow(() -> new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN));
+        }
 
         return GlobalResponse
                 .<Meta, ClassroomResponse>builder()

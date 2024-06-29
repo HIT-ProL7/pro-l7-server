@@ -31,7 +31,7 @@ public class ClassroomController {
     ClassroomService classroomService;
 
     @PostMapping(Endpoint.V1.Classroom.CREATE)
-    public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request){
+    public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(classroomService.createClass(request));
@@ -44,6 +44,6 @@ public class ClassroomController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(classroomService.getMembersOfClassroom(currentUser.getId(), classroomId));
+                .body(classroomService.getMembersOfClassroom(currentUser, classroomId));
     }
 }
