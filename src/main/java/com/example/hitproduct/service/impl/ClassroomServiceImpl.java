@@ -156,7 +156,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .map(userMapper::toUserResponse)
                 .collect(Collectors.toList());
 
-        classroomResponse.setUserResponses(userResponses);
+        classroomResponse.setLeaders(userResponses);
         return classroomResponse;
     }
 }
