@@ -17,8 +17,9 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ClassroomResponse {
+public class CreateClassroomResponse {
     String name;
     String description;
     Timestamp createAt;
+    Timestamp startedDate;
 }

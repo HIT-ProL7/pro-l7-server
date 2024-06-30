@@ -13,7 +13,8 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
-import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
+import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.service.ClassroomService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -23,10 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +33,7 @@ public class ClassroomController {
     ClassroomService classroomService;
 
     @PostMapping(Endpoint.V1.Classroom.CREATE)
-    public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request){
+    public ResponseEntity<GlobalResponse<Meta, CreateClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(classroomService.createClass(request));
@@ -48,5 +46,12 @@ public class ClassroomController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(classroomService.addMember(id, request, userDetails.getUsername()));
+    }
+
+    @GetMapping(Endpoint.V1.Classroom.CLASSROOM_ID)
+    public ResponseEntity<GlobalResponse<Meta, GetClassroomResponse>> getClassroom(@PathVariable(name = "classroomId") Long id){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(classroomService.getClassroom(id));
     }
 }
