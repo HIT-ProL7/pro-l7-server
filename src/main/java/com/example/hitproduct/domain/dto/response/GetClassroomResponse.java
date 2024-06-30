@@ -23,5 +23,5 @@ public class GetClassroomResponse {
     String description;
     String roadmap;
     Timestamp createAt;
-    List<UserResponse> userResponses;
+    List<UserResponse> leaders;
 }

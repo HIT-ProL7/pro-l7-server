@@ -22,6 +22,6 @@ public interface ClassroomMapper {
     Classroom toClassroom(CreateClassroomRequest request);
     CreateClassroomResponse toClassroomResponse(Classroom classroom);
 
-    @Mapping(target = "userResponses", ignore = true)
+    @Mapping(target = "leaders", ignore = true)
     GetClassroomResponse toGetClassroomResponse(Classroom classroom);
 }
