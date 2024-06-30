@@ -12,6 +12,8 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.sql.Timestamp;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -21,4 +23,5 @@ public class CreateClassroomRequest {
     @NotEmpty(message = ValidationMessage.Classroom.CLASSNAME_NOT_BLANK)
     String name;
     String description;
+    Timestamp startedDate;
 }

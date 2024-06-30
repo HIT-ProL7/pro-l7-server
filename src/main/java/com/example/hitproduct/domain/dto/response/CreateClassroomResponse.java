@@ -21,4 +21,5 @@ public class CreateClassroomResponse {
     String name;
     String description;
     Timestamp createAt;
+    Timestamp startedDate;
 }
