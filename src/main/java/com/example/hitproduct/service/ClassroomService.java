@@ -9,10 +9,11 @@ package com.example.hitproduct.service;
 
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
+import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
-import com.example.hitproduct.domain.dto.response.UserResponse;
 
 public interface ClassroomService {
     GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request);
+    GlobalResponse<Meta, String> addMember(Long classroomId,AddMemberRequest request, String studentCode);
 }
