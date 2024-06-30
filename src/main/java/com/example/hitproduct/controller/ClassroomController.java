@@ -13,7 +13,7 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
-import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
 import com.example.hitproduct.service.ClassroomService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -35,7 +35,7 @@ public class ClassroomController {
     ClassroomService classroomService;
 
     @PostMapping(Endpoint.V1.Classroom.CREATE)
-    public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request){
+    public ResponseEntity<GlobalResponse<Meta, CreateClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(classroomService.createClass(request));

@@ -13,7 +13,8 @@ import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
-import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
+import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Position;
 import com.example.hitproduct.domain.entity.SeatRole;
@@ -45,7 +46,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     PositionRepository positionRepository;
 
     @Override
-    public GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request) {
+    public GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request) {
 
         if (classroomRepository.existsByName(request.getName())) {
             throw new AlreadyExistsException(ErrorMessage.Classroom.ERR_EXISTS_CLASSNAME);
@@ -56,7 +57,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom = classroomRepository.save(classroom);
 
         return GlobalResponse
-                .<Meta, ClassroomResponse>builder()
+                .<Meta, CreateClassroomResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(classroomMapper.toClassroomResponse(classroom))
                 .build();
@@ -118,5 +119,10 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data("Member added successfully!")
                 .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, GetClassroomResponse> getClassroom(Long id) {
+        return null;
     }
 }

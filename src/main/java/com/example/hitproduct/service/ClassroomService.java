@@ -11,9 +11,11 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
-import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
+import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 
 public interface ClassroomService {
-    GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request);
+    GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request);
     GlobalResponse<Meta, String> addMember(Long classroomId,AddMemberRequest request, String studentCode);
+    GlobalResponse<Meta, GetClassroomResponse> getClassroom(Long id);
 }
