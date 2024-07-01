@@ -7,6 +7,7 @@ package com.example.hitproduct.service.impl;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.CommonConstant;
 import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
@@ -35,6 +36,7 @@ import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -139,6 +141,30 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .<Meta, GetClassroomResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(classroomResponse)
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, List<GetClassroomResponse>> getMyClassroom(String studentCode) {
+        List<GetClassroomResponse> responses = new ArrayList<>();
+        Optional<User> userOptional = userRepository.findByStudentCode(studentCode);
+        if(userOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        List<Classroom> classrooms = positionRepository
+                .findActiveClassroomsByUserId(userOptional.get().getId(),
+                        CommonConstant.Classroom.IS_OPEN);
+
+        for (Classroom classroom : classrooms) {
+            GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
+            responses.add(classroomResponse);
+        }
+
+        return GlobalResponse
+                .<Meta, List<GetClassroomResponse>>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(responses)
                 .build();
     }
 

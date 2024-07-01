@@ -25,6 +25,7 @@ public interface Endpoint {
             String CREATE = PREFIX + "/create";
             String CLASSROOM_ID = PREFIX + "/{classroomId}";
             String ADD_MEMBER = CLASSROOM_ID + "/member";
+            String MY_CLASS = PREFIX + "/my-class";
         }
     }
 }
