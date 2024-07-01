@@ -14,8 +14,11 @@ import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
 import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 
+import java.util.List;
+
 public interface ClassroomService {
     GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request);
     GlobalResponse<Meta, String> addMember(Long classroomId,AddMemberRequest request, String studentCode);
     GlobalResponse<Meta, GetClassroomResponse> getClassroom(Long id);
+    GlobalResponse<Meta, List<GetClassroomResponse>> getMyClassroom(String studentCode);
 }
