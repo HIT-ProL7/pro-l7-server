@@ -42,6 +42,8 @@ public class Classroom {
     @UpdateTimestamp
     Timestamp updatedAt;
 
+    Timestamp startedDate;
+
     @Column(nullable = false)
     boolean status;
 

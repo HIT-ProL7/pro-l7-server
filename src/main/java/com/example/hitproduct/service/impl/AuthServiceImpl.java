@@ -8,7 +8,6 @@ package com.example.hitproduct.service.impl;
  */
 
 import com.example.hitproduct.constant.ErrorMessage;
-import com.example.hitproduct.domain.dto.MailDTO;
 import com.example.hitproduct.domain.dto.global.BlankData;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
@@ -19,6 +18,7 @@ import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Role;
+import com.example.hitproduct.domain.entity.RoleType;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
@@ -28,7 +28,6 @@ import com.example.hitproduct.repository.RoleRepository;
 import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.security.jwt.JwtUtils;
 import com.example.hitproduct.service.AuthService;
-import com.example.hitproduct.util.RandomUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,7 +35,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,14 +44,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthServiceImpl implements AuthService {
-    UserRepository        userRepository;
-    RoleRepository        roleRepository;
-    UserMapper            userMapper;
-    PasswordEncoder       passwordEncoder;
+    UserRepository userRepository;
+    RoleRepository roleRepository;
+    UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
     AuthenticationManager authenticationManager;
-    JwtUtils              jwtUtils;
-    AutoMailer            autoMailer;
-    RandomUtil            randomUtil;
+    JwtUtils jwtUtils;
 
     @Override
     public GlobalResponse<Meta, UserResponse> register(AddUserRequest userRequest) {
@@ -64,9 +60,9 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
         Role role = Role.builder()
-                        .id(1L)
-                        .name("ROLE_USER")
-                        .build();
+                .id(2L)
+                .name("ROLE_USER")
+                .build();
 
         roleRepository.save(role);
 
@@ -95,10 +91,8 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtils.generateJwtTokenForUser(authentication);
         User loggedInUser = (User) authentication.getPrincipal();
         String roles = loggedInUser.getAuthorities().stream()
-                                   .map(GrantedAuthority::getAuthority)
-                                   .collect(Collectors.joining(","));
-        loggedInUser.setResetPasswordCount(0);
-        userRepository.save(loggedInUser);
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
 
         return GlobalResponse
                 .<Meta, AuthResponse>builder()
@@ -115,21 +109,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public GlobalResponse<Meta, BlankData> forgotPassword(String studentCode) {
-        User found = userRepository.findByStudentCode(studentCode).orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
-
-        if (found.getResetPasswordCount() != null && found.getResetPasswordCount() > 5) {
-            throw new AppException(ErrorMessage.Auth.ALREADY_RESET_PASSWORD);
-        }
-
-        String newPassword = randomUtil.generatePassword();
-        found.setPassword(passwordEncoder.encode(newPassword));
-        found.setResetPasswordCount(found.getResetPasswordCount() == null ? 0 : found.getResetPasswordCount() + 1);
-        userRepository.save(found);
-        autoMailer.send(MailDTO.builder().to(found.getEmail()).subject("Reset password").text("Your new password is: " + newPassword).build());
-        return GlobalResponse
-                .<Meta, BlankData>builder()
-                .meta(Meta.builder().status(Status.SUCCESS).build())
-                .build();
+        return null;
     }
 
 }

@@ -11,17 +11,33 @@ import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
+import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
-import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
+import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
+import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Classroom;
+import com.example.hitproduct.domain.entity.Position;
+import com.example.hitproduct.domain.entity.SeatRole;
+import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
+import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
+import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
+import com.example.hitproduct.repository.PositionRepository;
+import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.service.ClassroomService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +45,16 @@ import org.springframework.stereotype.Service;
 public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomRepository classroomRepository;
+    UserRepository userRepository;
+    PositionRepository positionRepository;
+
     ClassroomMapper classroomMapper;
+    UserMapper userMapper;
 
     @Override
-    public GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request) {
+    public GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request) {
 
-        if(classroomRepository.existsByName(request.getName())){
+        if (classroomRepository.existsByName(request.getName())) {
             throw new AlreadyExistsException(ErrorMessage.Classroom.ERR_EXISTS_CLASSNAME);
         }
         Classroom classroom = classroomMapper.toClassroom(request);
@@ -43,9 +63,100 @@ public class ClassroomServiceImpl implements ClassroomService {
         classroom = classroomRepository.save(classroom);
 
         return GlobalResponse
-                .<Meta, ClassroomResponse>builder()
+                .<Meta, CreateClassroomResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(classroomMapper.toClassroomResponse(classroom))
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public GlobalResponse<Meta, String> addMember(Long classroomId, AddMemberRequest request, String studentCode) {
+        Optional<Classroom> classroomOptional = classroomRepository.findById(classroomId);
+        if (classroomOptional.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
+        }
+
+        Classroom classroom = classroomOptional.get();
+
+        Optional<User> userOptional = userRepository.findByStudentCode(studentCode);
+
+        if (userOptional.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        User currentUser = userOptional.get();
+
+        boolean isLeader = classroom.getPositions().stream()
+                .anyMatch(position -> position.getUser().equals(currentUser)
+                        && position.getSeatRole().equals(SeatRole.LEADER));
+
+        boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
+
+        if (!isAdmin && !isLeader) {
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
+
+        Optional<User> newUserOpt = userRepository.findByStudentCode(request.getStudentCode());
+        if (newUserOpt.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        User newUser = newUserOpt.get();
+
+        Position position = null;
+        if (request.getSeatRole() != null) {
+            position = Position.builder()
+                    .user(newUser)
+                    .classroom(classroom)
+                    .seatRole(request.getSeatRole())
+                    .build();
+        } else {
+            position = Position.builder()
+                    .user(newUser)
+                    .classroom(classroom)
+                    .seatRole(SeatRole.MEMBER)
+                    .build();
+        }
+
+        positionRepository.save(position);
+        return GlobalResponse
+                .<Meta, String>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data("Member added successfully!")
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, GetClassroomResponse> getClassroom(Long id) {
+        Optional<Classroom> classroomOptional = classroomRepository.findById(id);
+        if(classroomOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
+        }
+
+        GetClassroomResponse classroomResponse = getClassroomResponse(classroomOptional.get());
+        return GlobalResponse
+                .<Meta, GetClassroomResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(classroomResponse)
+                .build();
+    }
+
+    private GetClassroomResponse getClassroomResponse(Classroom classroom){
+        GetClassroomResponse classroomResponse = classroomMapper.toGetClassroomResponse(classroom);
+
+        List<Position> positions = positionRepository.findAllByClassroom(classroom);
+
+        List<UserResponse> userResponses = positions.stream()
+                .filter(position -> position.getSeatRole().equals(SeatRole.LEADER))
+                .map(position -> position.getUser().getId())
+                .map(userRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(userMapper::toUserResponse)
+                .collect(Collectors.toList());
+
+        classroomResponse.setLeaders(userResponses);
+        return classroomResponse;
     }
 }
