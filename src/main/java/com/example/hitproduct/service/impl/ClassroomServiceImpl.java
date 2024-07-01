@@ -7,6 +7,7 @@ package com.example.hitproduct.service.impl;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.CommonConstant;
 import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
@@ -18,7 +19,7 @@ import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Position;
-import com.example.hitproduct.constant.SeatRole;
+import com.example.hitproduct.domain.entity.SeatRole;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.domain.mapper.UserMapper;
@@ -144,10 +145,18 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms() {
+    public GlobalResponse<Meta, List<GetClassroomResponse>> getMyClassroom(String studentCode) {
         List<GetClassroomResponse> responses = new ArrayList<>();
-        List<Classroom> classrooms = classroomRepository.findAll();
-        for(Classroom classroom : classrooms){
+        Optional<User> userOptional = userRepository.findByStudentCode(studentCode);
+        if(userOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        List<Classroom> classrooms = positionRepository
+                .findActiveClassroomsByUserId(userOptional.get().getId(),
+                        CommonConstant.Classroom.IS_OPEN);
+
+        for (Classroom classroom : classrooms) {
             GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
             responses.add(classroomResponse);
         }

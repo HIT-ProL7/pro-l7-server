@@ -63,11 +63,4 @@ public class ClassroomController {
                 .status(HttpStatus.OK)
                 .body(classroomService.getMyClassroom(userDetails.getUsername()));
     }
-
-    @GetMapping(Endpoint.V1.Classroom.PREFIX)
-    public ResponseEntity<GlobalResponse<Meta, List<GetClassroomResponse>>> getClassrooms(){
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(classroomService.getClassrooms());
-    }
 }
