@@ -18,7 +18,6 @@ import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Role;
-import com.example.hitproduct.domain.entity.RoleType;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
@@ -44,12 +43,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthServiceImpl implements AuthService {
-    UserRepository userRepository;
-    RoleRepository roleRepository;
-    UserMapper userMapper;
-    PasswordEncoder passwordEncoder;
+    UserRepository        userRepository;
+    RoleRepository        roleRepository;
+    UserMapper            userMapper;
+    PasswordEncoder       passwordEncoder;
     AuthenticationManager authenticationManager;
-    JwtUtils jwtUtils;
+    JwtUtils              jwtUtils;
 
     @Override
     public GlobalResponse<Meta, UserResponse> register(AddUserRequest userRequest) {
@@ -60,9 +59,9 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
         Role role = Role.builder()
-                .id(2L)
-                .name("ROLE_USER")
-                .build();
+                        .id(2L)
+                        .name("ROLE_USER")
+                        .build();
 
         roleRepository.save(role);
 
@@ -91,8 +90,8 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtils.generateJwtTokenForUser(authentication);
         User loggedInUser = (User) authentication.getPrincipal();
         String roles = loggedInUser.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+                                   .map(GrantedAuthority::getAuthority)
+                                   .collect(Collectors.joining(","));
 
         return GlobalResponse
                 .<Meta, AuthResponse>builder()
