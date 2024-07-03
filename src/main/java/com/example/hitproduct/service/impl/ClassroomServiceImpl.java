@@ -19,7 +19,7 @@ import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Position;
-import com.example.hitproduct.domain.entity.SeatRole;
+import com.example.hitproduct.constant.SeatRole;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.domain.mapper.UserMapper;
@@ -141,6 +141,22 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .<Meta, GetClassroomResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(classroomResponse)
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms() {
+        List<GetClassroomResponse> responses = new ArrayList<>();
+        List<Classroom> classrooms = classroomRepository.findAll();
+        for(Classroom classroom : classrooms){
+            GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
+            responses.add(classroomResponse);
+        }
+
+        return GlobalResponse
+                .<Meta, List<GetClassroomResponse>>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(responses)
                 .build();
     }
 
