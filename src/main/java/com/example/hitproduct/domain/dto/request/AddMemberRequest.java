@@ -7,7 +7,7 @@ package com.example.hitproduct.domain.dto.request;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
-import com.example.hitproduct.domain.entity.SeatRole;
+import com.example.hitproduct.constant.SeatRole;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

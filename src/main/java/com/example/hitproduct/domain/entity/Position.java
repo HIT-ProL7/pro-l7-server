@@ -8,6 +8,7 @@ package com.example.hitproduct.domain.entity;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.SeatRole;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

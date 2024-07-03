@@ -18,7 +18,7 @@ import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Position;
-import com.example.hitproduct.domain.entity.SeatRole;
+import com.example.hitproduct.constant.SeatRole;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.domain.mapper.UserMapper;

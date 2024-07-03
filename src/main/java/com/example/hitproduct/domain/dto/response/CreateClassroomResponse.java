@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateClassroomResponse {
+    Long id;
     String name;
     String description;
     Timestamp createAt;
