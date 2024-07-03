@@ -35,6 +35,7 @@ import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -139,6 +140,22 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .<Meta, GetClassroomResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(classroomResponse)
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms() {
+        List<GetClassroomResponse> responses = new ArrayList<>();
+        List<Classroom> classrooms = classroomRepository.findAll();
+        for(Classroom classroom : classrooms){
+            GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
+            responses.add(classroomResponse);
+        }
+
+        return GlobalResponse
+                .<Meta, List<GetClassroomResponse>>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(responses)
                 .build();
     }
 
