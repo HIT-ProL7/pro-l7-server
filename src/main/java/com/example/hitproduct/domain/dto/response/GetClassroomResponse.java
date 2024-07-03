@@ -19,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class GetClassroomResponse {
+    Long id;
     String name;
     String description;
     String roadmap;
