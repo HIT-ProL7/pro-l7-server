@@ -7,6 +7,7 @@ package com.example.hitproduct.service.impl;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.CommonConstant;
 import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
@@ -148,6 +149,30 @@ public class ClassroomServiceImpl implements ClassroomService {
         List<GetClassroomResponse> responses = new ArrayList<>();
         List<Classroom> classrooms = classroomRepository.findAll();
         for(Classroom classroom : classrooms){
+            GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
+            responses.add(classroomResponse);
+        }
+
+        return GlobalResponse
+                .<Meta, List<GetClassroomResponse>>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(responses)
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, List<GetClassroomResponse>> getMyClassroom(String studentCode) {
+        List<GetClassroomResponse> responses = new ArrayList<>();
+        Optional<User> userOptional = userRepository.findByStudentCode(studentCode);
+        if(userOptional.isEmpty()){
+            throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
+        }
+
+        List<Classroom> classrooms = positionRepository
+                .findActiveClassroomsByUserId(userOptional.get().getId(),
+                        CommonConstant.Classroom.IS_OPEN);
+
+        for (Classroom classroom : classrooms) {
             GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
             responses.add(classroomResponse);
         }
