@@ -27,9 +27,9 @@ public class AlreadyExistsException extends RuntimeException {
         this.status = HttpStatus.BAD_REQUEST;
     }
 
-    public AlreadyExistsException(String message, String message1, HttpStatus status, String[] params) {
+    public AlreadyExistsException(String message, HttpStatus status, String[] params) {
         super(message);
-        this.message = message1;
+        this.message = message;
         this.status = status;
         this.params = params;
     }

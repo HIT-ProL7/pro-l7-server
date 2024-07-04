@@ -8,9 +8,11 @@ package com.example.hitproduct.domain.mapper;
  */
 
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
-import com.example.hitproduct.domain.dto.response.ClassroomResponse;
+import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
+import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
@@ -18,5 +20,8 @@ public interface ClassroomMapper {
     ClassroomMapper INSTANCE = Mappers.getMapper(ClassroomMapper.class);
 
     Classroom toClassroom(CreateClassroomRequest request);
-    ClassroomResponse toClassroomResponse(Classroom classroom);
+    CreateClassroomResponse toClassroomResponse(Classroom classroom);
+
+    @Mapping(target = "leaders", ignore = true)
+    GetClassroomResponse toGetClassroomResponse(Classroom classroom);
 }

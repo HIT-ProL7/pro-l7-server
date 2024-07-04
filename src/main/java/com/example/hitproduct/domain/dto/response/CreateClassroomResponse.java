@@ -19,11 +19,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-public class ClassroomResponse {
-    String     name;
-    String     description;
-    String     roadmap;
-    Timestamp  createAt;
-    List<User> members;
+public class CreateClassroomResponse {
+    Long id;
+    String name;
+    String description;
+    Timestamp createAt;
+    Timestamp startedDate;
 }

@@ -11,17 +11,24 @@ public interface ErrorMessage {
     interface Auth {
         String ERR_EXISTS_USERNAME    = "exception.user.exist";
         String ALREADY_RESET_PASSWORD = "exception.auth.already-reset-password";
+        String ERR_NOT_LOGIN          = "exception.auth.not-login";
+        String ERR_MISSING_PREFIX     = "exception.auth.missing-prefix";
+        String ERR_EXPIRED_SESSION    = "exception.auth.expired-session";
+        String ERR_INVALID_TOKEN      = "exception.auth.invalid-token";
+        String ERR_UNSUPPORTED_TOKEN  = "exception.auth.unsupported-token";
     }
-
+    
     interface User {
-        String ERR_NOT_FOUND               = "exception.user.notFound";
+        String ERR_NOT_FOUND = "exception.user.notFound";
         String MISMATCHED_CONFIRM_PASSWORD = "exception.user.mismatched-confirm-password";
-        String MISMATCHED_OLD_PASSWORD     = "exception.user.mismatched-old-password";
+        String MISMATCHED_OLD_PASSWORD  = "exception.user.mismatched-old-password";
+        String UNAUTHORIZED = "exception.user.unauthorized";
     }
 
-    interface Classroom{
+    interface Classroom {
         String ERR_EXISTS_CLASSNAME = "exception.class.exist";
         String ERR_NOT_FOUND = "exception.classroom.not-found";
         String ERR_FORBIDDEN = "exception.classroom.forbidden";
+        String ERR_NOTFOUND_BY_ID = "exception.class.notfound";
     }
 }
