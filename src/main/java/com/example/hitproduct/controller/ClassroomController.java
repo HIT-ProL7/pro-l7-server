@@ -36,37 +36,37 @@ public class ClassroomController {
     ClassroomService classroomService;
 
     @PostMapping(Endpoint.V1.Classroom.CREATE)
-    public ResponseEntity<GlobalResponse<Meta, CreateClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request){
+    public ResponseEntity<GlobalResponse<Meta, CreateClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(classroomService.createClass(request));
     }
 
     @PostMapping(Endpoint.V1.Classroom.ADD_MEMBER)
-    public ResponseEntity<GlobalResponse<Meta, String>> addMember(@PathVariable(name = "classroomId") Long id,
+    public ResponseEntity<GlobalResponse<Meta, String>> addMember(@PathVariable(name = "classroomId") Integer id,
                                                                   @RequestBody AddMemberRequest request,
-                                                                  @AuthenticationPrincipal UserDetails userDetails){
+                                                                  @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(classroomService.addMember(id, request, userDetails.getUsername()));
     }
 
     @GetMapping(Endpoint.V1.Classroom.CLASSROOM_ID)
-    public ResponseEntity<GlobalResponse<Meta, GetClassroomResponse>> getClassroom(@PathVariable(name = "classroomId") Long id){
+    public ResponseEntity<GlobalResponse<Meta, GetClassroomResponse>> getClassroom(@PathVariable(name = "classroomId") Integer id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(classroomService.getClassroom(id));
     }
 
     @GetMapping(Endpoint.V1.Classroom.PREFIX)
-    public ResponseEntity<GlobalResponse<Meta, List<GetClassroomResponse>>> getClassrooms(){
+    public ResponseEntity<GlobalResponse<Meta, List<GetClassroomResponse>>> getClassrooms() {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(classroomService.getClassrooms());
     }
 
     @GetMapping(Endpoint.V1.Classroom.MY_CLASS)
-    public ResponseEntity<GlobalResponse<Meta, List<GetClassroomResponse>>> getMyClassroom(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<GlobalResponse<Meta, List<GetClassroomResponse>>> getMyClassroom(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(classroomService.getMyClassroom(userDetails.getUsername()));

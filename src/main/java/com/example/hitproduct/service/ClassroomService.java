@@ -24,8 +24,11 @@ public interface ClassroomService {
 
     GlobalResponse<Meta, GetClassroomResponse> getMembersOfClassroom(User currentUser, Integer classroomId);
 
-    GlobalResponse<Meta, String> addMember(Long classroomId,AddMemberRequest request, String studentCode);
-    GlobalResponse<Meta, GetClassroomResponse> getClassroom(Long id);
+    GlobalResponse<Meta, String> addMember(Integer classroomId, AddMemberRequest request, String studentCode);
+
+    GlobalResponse<Meta, GetClassroomResponse> getClassroom(Integer id);
+
     GlobalResponse<Meta, List<GetClassroomResponse>> getMyClassroom(String studentCode);
+
     GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms();
 }

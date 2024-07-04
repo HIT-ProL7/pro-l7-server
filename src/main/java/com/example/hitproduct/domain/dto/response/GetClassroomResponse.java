@@ -7,6 +7,7 @@ package com.example.hitproduct.domain.dto.response;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.domain.entity.User;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,12 +19,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class GetClassroomResponse {
-    Long id;
-    String name;
-    String description;
-    String roadmap;
-    Timestamp createAt;
-    Timestamp startedDate;
+    Long               id;
+    String             name;
+    String             description;
+    String             roadmap;
+    Timestamp          createAt;
+    Timestamp          startedDate;
     List<UserResponse> leaders;
+    List<User>         members;
 }
