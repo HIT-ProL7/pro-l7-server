@@ -24,6 +24,7 @@ import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
+import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.repository.PositionRepository;
@@ -47,11 +48,11 @@ import java.util.stream.Collectors;
 public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomRepository classroomRepository;
-    UserRepository userRepository;
-    PositionRepository positionRepository;
+    UserRepository      userRepository;
+    PositionRepository  positionRepository;
 
     ClassroomMapper classroomMapper;
-    UserMapper userMapper;
+    UserMapper      userMapper;
 
     @Override
     public GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request) {
@@ -72,8 +73,44 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public GlobalResponse<Meta, GetClassroomResponse> getMembersOfClassroom(
+            User currentUser,
+            Integer classroomId
+    ) {
+        Classroom classroom = classroomRepository.findById(classroomId).orElseThrow(() ->
+                new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND)
+        );
+
+        boolean canGo = false;
+        if (currentUser.getRole().getName().equals("ROLE_ADMIN")) {
+            canGo = true;
+        }
+
+        if (!canGo) {
+            classroom.getPositions()
+                     .parallelStream()
+                     .filter(item -> item.getUser().getId().equals(currentUser.getId()) && item.getSeatRole().equals(SeatRole.LEADER))
+                     .findFirst()
+                     .orElseThrow(() -> new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN));
+        }
+
+        return GlobalResponse
+                .<Meta, GetClassroomResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(GetClassroomResponse
+                        .builder()
+                        .name(classroom.getName())
+                        .description(classroom.getDescription())
+                        .roadmap(classroom.getRoadmap())
+                        .createAt(classroom.getCreateAt())
+                        .members(classroom.getPositions().parallelStream().map(Position::getUser).toList())
+                        .build()
+                )
+                .build();
+    }
+
     @Transactional
-    public GlobalResponse<Meta, String> addMember(Long classroomId, AddMemberRequest request, String studentCode) {
+    public GlobalResponse<Meta, String> addMember(Integer classroomId, AddMemberRequest request, String studentCode) {
         Optional<Classroom> classroomOptional = classroomRepository.findById(classroomId);
         if (classroomOptional.isEmpty()) {
             throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
@@ -90,8 +127,8 @@ public class ClassroomServiceImpl implements ClassroomService {
         User currentUser = userOptional.get();
 
         boolean isLeader = classroom.getPositions().stream()
-                .anyMatch(position -> position.getUser().equals(currentUser)
-                        && position.getSeatRole().equals(SeatRole.LEADER));
+                                    .anyMatch(position -> position.getUser().equals(currentUser)
+                                                          && position.getSeatRole().equals(SeatRole.LEADER));
 
         boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
 
@@ -109,16 +146,16 @@ public class ClassroomServiceImpl implements ClassroomService {
         Position position = null;
         if (request.getSeatRole() != null) {
             position = Position.builder()
-                    .user(newUser)
-                    .classroom(classroom)
-                    .seatRole(request.getSeatRole())
-                    .build();
+                               .user(newUser)
+                               .classroom(classroom)
+                               .seatRole(request.getSeatRole())
+                               .build();
         } else {
             position = Position.builder()
-                    .user(newUser)
-                    .classroom(classroom)
-                    .seatRole(SeatRole.MEMBER)
-                    .build();
+                               .user(newUser)
+                               .classroom(classroom)
+                               .seatRole(SeatRole.MEMBER)
+                               .build();
         }
 
         positionRepository.save(position);
@@ -130,9 +167,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public GlobalResponse<Meta, GetClassroomResponse> getClassroom(Long id) {
+    public GlobalResponse<Meta, GetClassroomResponse> getClassroom(Integer id) {
         Optional<Classroom> classroomOptional = classroomRepository.findById(id);
-        if(classroomOptional.isEmpty()){
+        if (classroomOptional.isEmpty()) {
             throw new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID);
         }
 
@@ -148,7 +185,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms() {
         List<GetClassroomResponse> responses = new ArrayList<>();
         List<Classroom> classrooms = classroomRepository.findAll();
-        for(Classroom classroom : classrooms){
+        for (Classroom classroom : classrooms) {
             GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
             responses.add(classroomResponse);
         }
@@ -164,7 +201,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     public GlobalResponse<Meta, List<GetClassroomResponse>> getMyClassroom(String studentCode) {
         List<GetClassroomResponse> responses = new ArrayList<>();
         Optional<User> userOptional = userRepository.findByStudentCode(studentCode);
-        if(userOptional.isEmpty()){
+        if (userOptional.isEmpty()) {
             throw new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND);
         }
 
@@ -184,19 +221,19 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .build();
     }
 
-    private GetClassroomResponse getClassroomResponse(Classroom classroom){
+    private GetClassroomResponse getClassroomResponse(Classroom classroom) {
         GetClassroomResponse classroomResponse = classroomMapper.toGetClassroomResponse(classroom);
 
         List<Position> positions = positionRepository.findAllByClassroom(classroom);
 
         List<UserResponse> userResponses = positions.stream()
-                .filter(position -> position.getSeatRole().equals(SeatRole.LEADER))
-                .map(position -> position.getUser().getId())
-                .map(userRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(userMapper::toUserResponse)
-                .collect(Collectors.toList());
+                                                    .filter(position -> position.getSeatRole().equals(SeatRole.LEADER))
+                                                    .map(position -> position.getUser().getId())
+                                                    .map(userRepository::findById)
+                                                    .filter(Optional::isPresent)
+                                                    .map(Optional::get)
+                                                    .map(userMapper::toUserResponse)
+                                                    .collect(Collectors.toList());
 
         classroomResponse.setLeaders(userResponses);
         return classroomResponse;

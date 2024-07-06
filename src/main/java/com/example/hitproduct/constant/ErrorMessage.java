@@ -27,6 +27,8 @@ public interface ErrorMessage {
 
     interface Classroom {
         String ERR_EXISTS_CLASSNAME = "exception.class.exist";
+        String ERR_NOT_FOUND = "exception.classroom.not-found";
+        String ERR_FORBIDDEN = "exception.classroom.forbidden";
         String ERR_NOTFOUND_BY_ID = "exception.class.notfound";
     }
 }
