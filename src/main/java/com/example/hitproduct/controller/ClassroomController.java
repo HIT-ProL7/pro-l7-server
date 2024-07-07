@@ -17,6 +17,9 @@ import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
 import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.service.ClassroomService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +38,12 @@ import java.util.List;
 public class ClassroomController {
     ClassroomService classroomService;
 
+    @Operation(summary = "Create a new classroom")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Classroom created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request format or data provided"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated")
+    })
     @PostMapping(Endpoint.V1.Classroom.CREATE)
     public ResponseEntity<GlobalResponse<Meta, CreateClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request) {
         return ResponseEntity
@@ -42,6 +51,12 @@ public class ClassroomController {
                 .body(classroomService.createClass(request));
     }
 
+    @Operation(summary = "Add a member to a classroom")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Member added successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request format or data provided"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated")
+    })
     @PostMapping(Endpoint.V1.Classroom.ADD_MEMBER)
     public ResponseEntity<GlobalResponse<Meta, String>> addMember(@PathVariable(name = "classroomId") Integer id,
                                                                   @RequestBody AddMemberRequest request,
@@ -51,6 +66,11 @@ public class ClassroomController {
                 .body(classroomService.addMember(id, request, userDetails.getUsername()));
     }
 
+    @Operation(summary = "Get details of a classroom by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved classroom details"),
+            @ApiResponse(responseCode = "404", description = "Classroom not found")
+    })
     @GetMapping(Endpoint.V1.Classroom.CLASSROOM_ID)
     public ResponseEntity<GlobalResponse<Meta, GetClassroomResponse>> getClassroom(@PathVariable(name = "classroomId") Integer id) {
         return ResponseEntity
@@ -58,6 +78,11 @@ public class ClassroomController {
                 .body(classroomService.getClassroom(id));
     }
 
+    @Operation(summary = "Get all classrooms")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of classrooms"),
+            @ApiResponse(responseCode = "404", description = "No classrooms found")
+    })
     @GetMapping(Endpoint.V1.Classroom.PREFIX)
     public ResponseEntity<GlobalResponse<Meta, List<GetClassroomResponse>>> getClassrooms() {
         return ResponseEntity
@@ -65,6 +90,11 @@ public class ClassroomController {
                 .body(classroomService.getClassrooms());
     }
 
+    @Operation(summary = "Get classrooms that the current user is a member of")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved classrooms"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated")
+    })
     @GetMapping(Endpoint.V1.Classroom.MY_CLASS)
     public ResponseEntity<GlobalResponse<Meta, List<GetClassroomResponse>>> getMyClassroom(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity
@@ -72,6 +102,12 @@ public class ClassroomController {
                 .body(classroomService.getMyClassroom(userDetails.getUsername()));
     }
 
+    @Operation(summary = "Get members of a specific classroom")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved members of classroom"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - user not authorized to access this classroom")
+    })
     @GetMapping(Endpoint.V1.Classroom.GET_MEMBERS)
     public ResponseEntity<GlobalResponse<Meta, GetClassroomResponse>> getMembersOfClassroom(
             @AuthenticationPrincipal User currentUser,
@@ -82,6 +118,13 @@ public class ClassroomController {
                 .body(classroomService.getMembersOfClassroom(currentUser, classroomId));
     }
 
+    @Operation(summary = "Delete a member from a classroom")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Member deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - user not authorized to delete members from this classroom"),
+            @ApiResponse(responseCode = "404", description = "Member not found in classroom")
+    })
     @DeleteMapping(Endpoint.V1.Classroom.DELETE_MEMBER)
     public ResponseEntity<GlobalResponse<Meta, String>> deleteMemberFromClassroom(
             @AuthenticationPrincipal UserDetails userDetails,

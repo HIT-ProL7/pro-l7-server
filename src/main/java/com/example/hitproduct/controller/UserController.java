@@ -14,6 +14,11 @@ import com.example.hitproduct.domain.dto.request.ChangePasswordRequest;
 import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +35,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     UserService userService;
 
+    @Operation(summary = "Get current user details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved current user details", content = @Content(schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @GetMapping(Endpoint.V1.User.ME)
     public ResponseEntity<GlobalResponse<Meta, UserResponse>> getCurrentUser(
             @AuthenticationPrincipal UserDetails userDetails
@@ -39,6 +50,13 @@ public class UserController {
                 .body(userService.getUserByStudentCode(userDetails.getUsername()));
     }
 
+    @Operation(summary = "Update user information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User information updated successfully", content = @Content(schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request format or data provided"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @PutMapping(Endpoint.V1.User.UPDATE_INFO)
     public ResponseEntity<GlobalResponse<Meta, UserResponse>> updateInfo(
             @RequestBody UpdateInfoRequest request,
@@ -49,6 +67,13 @@ public class UserController {
                 .body(userService.updateUser(userDetails.getUsername(), request));
     }
 
+    @Operation(summary = "Change user password")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User password changed successfully", content = @Content(schema = @Schema(implementation = UserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request format or data provided"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @PatchMapping(Endpoint.V1.User.CHANGE_PASSWORD)
     public ResponseEntity<GlobalResponse<Meta, UserResponse>> changePassword(
             @RequestBody @Valid ChangePasswordRequest request,
