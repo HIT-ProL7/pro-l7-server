@@ -22,6 +22,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -88,6 +89,36 @@ public class GlobalExceptionHandler {
                                   .status(Status.ERROR)
                                   .message(messageSourceUtil.getLocalizedMessage(e.getMessage()))
                                   .build()
+                        )
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(AuthorizationServiceException.class)
+    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleAuthorizationServiceException(AuthorizationServiceException ex){
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(GlobalResponse
+                        .<Meta, BlankData>builder()
+                        .meta(Meta.builder()
+                                .status(Status.ERROR)
+                                .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                .build()
+                        )
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleAppException(IllegalArgumentException ex){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(GlobalResponse
+                        .<Meta, BlankData>builder()
+                        .meta(Meta.builder()
+                                .status(Status.ERROR)
+                                .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                .build()
                         )
                         .build()
                 );

@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -80,6 +82,16 @@ public class ClassroomController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(classroomService.getMembersOfClassroom(currentUser, classroomId));
+    }
+
+    @PutMapping(Endpoint.V1.Classroom.EDIT_MEMBER)
+    public GlobalResponse<Meta, String> editMemberRole(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable(name = "classroomId") Integer classroomId,
+            @PathVariable(name = "userId") String userId,
+            @RequestParam String newRole
+    ) {
+        return classroomService.editMemberRole(userDetails.getUsername(), classroomId, userId, newRole);
     }
 
     @DeleteMapping(Endpoint.V1.Classroom.DELETE_MEMBER)
