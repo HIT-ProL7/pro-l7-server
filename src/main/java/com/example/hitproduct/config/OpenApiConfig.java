@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
                 version = "1.0.0",
                 contact = @Contact(
                         name = "ProL7",
-                        url = "https://www.facebook.com/profile.php?id=100047152174225"
+                        url = "https://www.facebook.com/HITClub.HaUI"
                 )),
         security = @SecurityRequirement(name = "bearerAuth")
 )
