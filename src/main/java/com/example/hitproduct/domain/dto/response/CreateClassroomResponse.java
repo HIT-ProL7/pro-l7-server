@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateClassroomResponse {
-    Long id;
+    Integer id;
     String name;
     String description;
     Timestamp createAt;
