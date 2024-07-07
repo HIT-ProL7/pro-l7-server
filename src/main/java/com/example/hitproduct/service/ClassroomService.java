@@ -31,4 +31,6 @@ public interface ClassroomService {
     GlobalResponse<Meta, List<GetClassroomResponse>> getMyClassroom(String studentCode);
 
     GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms();
+
+    GlobalResponse<Meta, String> deleteMember(String username, Integer classId, String userId);
 }

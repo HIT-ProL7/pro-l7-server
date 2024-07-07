@@ -81,4 +81,15 @@ public class ClassroomController {
                 .status(HttpStatus.OK)
                 .body(classroomService.getMembersOfClassroom(currentUser, classroomId));
     }
+
+    @DeleteMapping(Endpoint.V1.Classroom.DELETE_MEMBER)
+    public ResponseEntity<GlobalResponse<Meta, String>> deleteMemberFromClassroom(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PathVariable(name = "classroomId") Integer classId,
+            @PathVariable(name = "userId") String userId
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(classroomService.deleteMember(userDetails.getUsername(), classId, userId));
+    }
 }

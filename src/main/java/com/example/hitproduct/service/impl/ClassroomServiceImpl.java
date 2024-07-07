@@ -34,6 +34,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -194,6 +195,36 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .<Meta, List<GetClassroomResponse>>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(responses)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public GlobalResponse<Meta, String> deleteMember(String username, Integer classId, String userId) {
+        User currentUser = userRepository.findByStudentCode(username)
+                .orElseThrow(()-> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+
+        Classroom classroom = classroomRepository.findById(classId)
+                .orElseThrow(()->new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
+
+        boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
+        boolean isLeader = classroom.getPositions().stream()
+                .anyMatch(position -> position.getUser().equals(currentUser)
+                        && position.getSeatRole().equals(SeatRole.LEADER));
+
+        if (!isAdmin && !isLeader){
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
+
+        Position position = positionRepository.findByUserIdAndClassroomId(userId, classId)
+                .orElseThrow(()->new NotFoundException(ErrorMessage.User.NOT_FOUND_IN_CLASS));
+
+        positionRepository.deleteByPositionId(position.getId());
+
+        return GlobalResponse
+                .<Meta, String>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data("Delete member from classroom successfully!")
                 .build();
     }
 
