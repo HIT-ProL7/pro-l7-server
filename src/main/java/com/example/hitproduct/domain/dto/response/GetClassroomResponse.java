@@ -21,7 +21,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class GetClassroomResponse {
-    Long               id;
+    Integer               id;
     String             name;
     String             description;
     String             roadmap;
