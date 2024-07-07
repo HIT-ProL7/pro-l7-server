@@ -23,6 +23,7 @@ public interface ErrorMessage {
         String MISMATCHED_CONFIRM_PASSWORD = "exception.user.mismatched-confirm-password";
         String MISMATCHED_OLD_PASSWORD  = "exception.user.mismatched-old-password";
         String UNAUTHORIZED = "exception.user.unauthorized";
+        String NOT_FOUND_IN_CLASS = "exception.user.notFoundInClass";
     }
 
     interface Classroom {
