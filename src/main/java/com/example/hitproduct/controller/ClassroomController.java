@@ -118,7 +118,13 @@ public class ClassroomController {
                 .body(classroomService.getMembersOfClassroom(currentUser, classroomId));
     }
 
-    @PutMapping(Endpoint.V1.Classroom.EDIT_MEMBER)
+    @Operation(summary = "Edit a member role in a classroom")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Member edit role successfully"),
+            @ApiResponse(responseCode = "400", description = "Member or classroom not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated")
+    })
+    @PutMapping(Endpoint.V1.Classroom.EDIT_MEMBER_ROLE)
     public GlobalResponse<Meta, String> editMemberRole(
             @AuthenticationPrincipal UserDetails userDetails,
             @PathVariable(name = "classroomId") Integer classroomId,

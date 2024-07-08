@@ -28,7 +28,7 @@ public interface Endpoint {
             String ADD_MEMBER = CLASSROOM_ID + "/member";
             String MY_CLASS = PREFIX + "/my-class";
             String DELETE_MEMBER = CLASSROOM_ID + "/member" + "/{userId}";
-            String EDIT_MEMBER = CLASSROOM_ID + "/member" + "/{userId}/role";
+            String EDIT_MEMBER_ROLE = CLASSROOM_ID + "/member" + "/{userId}/role";
         }
     }
 }
