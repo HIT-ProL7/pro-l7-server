@@ -25,10 +25,10 @@ public interface Endpoint {
             String CREATE = PREFIX + "/create";
             String GET_MEMBERS = PREFIX + "/{classroomId}" + "/members";
             String CLASSROOM_ID = PREFIX + "/{classroomId}";
-            String ADD_MEMBER = CLASSROOM_ID + "/member";
+            String ADD_MEMBER = CLASSROOM_ID + "/members";
             String MY_CLASS = PREFIX + "/my-class";
-            String DELETE_MEMBER = CLASSROOM_ID + "/member" + "/{userId}";
-            String EDIT_MEMBER_ROLE = CLASSROOM_ID + "/member" + "/{userId}/role";
+            String DELETE_MEMBER = CLASSROOM_ID + "/members" + "/{userId}";
+            String EDIT_MEMBER_ROLE = CLASSROOM_ID + "/members" + "/{userId}/positions";
         }
     }
 }
