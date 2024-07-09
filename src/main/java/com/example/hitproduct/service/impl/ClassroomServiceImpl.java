@@ -127,7 +127,10 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         User currentUser = userOptional.get();
 
-        isAdminOrLeader(currentUser, classroom);
+        boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
+        if(!canModifyResource){
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
 
         Optional<User> newUserOpt = userRepository.findByStudentCode(request.getStudentCode());
         if (newUserOpt.isEmpty()) {
@@ -199,7 +202,10 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom classroom = classroomRepository.findById(classId)
                 .orElseThrow(()->new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
-        isAdminOrLeader(currentUser, classroom);
+        boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
+        if(!canModifyResource){
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
 
         Position position = positionRepository.findByUserIdAndClassroomId(userId, classId)
                 .orElseThrow(()->new NotFoundException(ErrorMessage.User.NOT_FOUND_IN_CLASS));
@@ -221,7 +227,10 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom classroom = classroomRepository.findById(classId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
-        isAdminOrLeader(currentUser, classroom);
+        boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
+        if(!canModifyResource){
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
 
         Position position = positionRepository.findByUserIdAndClassroomId(userId, classId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.NOT_FOUND_IN_CLASS));
@@ -267,15 +276,16 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .build();
     }
 
-    private void isAdminOrLeader(User currentUser, Classroom classroom){
+    private boolean isAdminOrLeader(User currentUser, Classroom classroom){
         boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
         boolean isLeader = classroom.getPositions().stream()
                 .anyMatch(position -> position.getUser().equals(currentUser)
                         && position.getSeatRole().equals(SeatRole.LEADER));
 
         if (!isAdmin && !isLeader) {
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+            return false;
         }
+        return true;
     }
 
 
