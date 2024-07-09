@@ -13,9 +13,10 @@ import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.request.EditClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
+import com.example.hitproduct.domain.entity.User;
 
 public interface ClassroomService {
     GlobalResponse<Meta, ClassroomResponse> createClass(CreateClassroomRequest request);
 
-    GlobalResponse<Meta, ClassroomResponse> editClassroom(String userId, Integer classroomId, EditClassroomRequest request);
+    GlobalResponse<Meta, ClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request);
 }

@@ -16,6 +16,7 @@ import com.example.hitproduct.domain.dto.request.EditClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.SeatRole;
+import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
 import com.example.hitproduct.exception.ForbiddenException;
@@ -54,16 +55,19 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public GlobalResponse<Meta, ClassroomResponse> editClassroom(String userId, Integer classroomId, EditClassroomRequest request) {
+    public GlobalResponse<Meta, ClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request) {
         Classroom foundClassroom = classroomRepository
                 .findById(classroomId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND));
 
-        foundClassroom.getPositions()
-                      .parallelStream()
-                      .filter(item -> item.getSeatRole().equals(SeatRole.LEADER) && item.getUser().getId().equals(userId))
-                      .findFirst()
-                      .orElseThrow(() -> new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN));
+        boolean canUpdate = foundClassroom
+                .getPositions()
+                .parallelStream()
+                .anyMatch(item -> item.getSeatRole().equals(SeatRole.LEADER) && item.getUser().getId().equals(currentUser.getId()));
+
+        if (!canUpdate && !currentUser.getRole().getName().equals("ROLE_ADMIN")) {
+            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+        }
 
         if (request.getName() != null) foundClassroom.setName(request.getName());
         if (request.getDescription() != null) foundClassroom.setDescription(request.getDescription());

@@ -46,6 +46,6 @@ public class ClassroomController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(classroomService.editClassroom(currentUser.getId(), classroomId, request));
+                .body(classroomService.editClassroom(currentUser, classroomId, request));
     }
 }
