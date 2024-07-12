@@ -127,13 +127,8 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         User currentUser = userOptional.get();
 
-        boolean isLeader = classroom.getPositions().stream()
-                                    .anyMatch(position -> position.getUser().equals(currentUser)
-                                                          && position.getSeatRole().equals(SeatRole.LEADER));
-
-        boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
-
-        if (!isAdmin && !isLeader) {
+        boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
+        if(!canModifyResource){
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
@@ -207,12 +202,8 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom classroom = classroomRepository.findById(classId)
                 .orElseThrow(()->new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
-        boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
-        boolean isLeader = classroom.getPositions().stream()
-                .anyMatch(position -> position.getUser().equals(currentUser)
-                        && position.getSeatRole().equals(SeatRole.LEADER));
-
-        if (!isAdmin && !isLeader){
+        boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
+        if(!canModifyResource){
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
@@ -225,6 +216,39 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .<Meta, String>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data("Delete member from classroom successfully!")
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, String> editMemberRole(String username, Integer classId, String userId, String role) {
+        User currentUser = userRepository.findByStudentCode(username)
+                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+
+        Classroom classroom = classroomRepository.findById(classId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
+
+        boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
+        if(!canModifyResource){
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
+
+        Position position = positionRepository.findByUserIdAndClassroomId(userId, classId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.NOT_FOUND_IN_CLASS));
+
+        SeatRole newRole;
+        try {
+            newRole = SeatRole.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid role: " + role);
+        }
+
+        position.setSeatRole(newRole);
+        positionRepository.save(position);
+
+        return GlobalResponse
+                .<Meta, String>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data("Updated member role in classroom successfully!")
                 .build();
     }
 
@@ -251,6 +275,19 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .data(responses)
                 .build();
     }
+
+    private boolean isAdminOrLeader(User currentUser, Classroom classroom){
+        boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
+        boolean isLeader = classroom.getPositions().stream()
+                .anyMatch(position -> position.getUser().equals(currentUser)
+                        && position.getSeatRole().equals(SeatRole.LEADER));
+
+        if (!isAdmin && !isLeader) {
+            return false;
+        }
+        return true;
+    }
+
 
     private GetClassroomResponse getClassroomResponse(Classroom classroom) {
         GetClassroomResponse classroomResponse = classroomMapper.toGetClassroomResponse(classroom);
