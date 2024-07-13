@@ -13,15 +13,18 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.domain.dto.request.CreateLessonRequest;
+import com.example.hitproduct.domain.dto.request.UpdateLessonRequest;
 import com.example.hitproduct.domain.dto.response.LessonResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Lesson;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.LessonMapper;
+import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.repository.LessonRepository;
 import com.example.hitproduct.repository.UserRepository;
+import com.example.hitproduct.service.CloudinaryService;
 import com.example.hitproduct.service.LessonService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +40,8 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
-    LessonRepository lessonRepository;
-    UserRepository userRepository;
+    LessonRepository    lessonRepository;
+    UserRepository      userRepository;
     ClassroomRepository classroomRepository;
 
     LessonMapper lessonMapper;
@@ -46,13 +49,13 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public GlobalResponse<Meta, LessonResponse> createLesson(CreateLessonRequest request, String studentCode) {
         User currentUser = userRepository.findByStudentCode(studentCode)
-                .orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+                                         .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         Classroom classroom = classroomRepository.findById(request.getClassroomId())
-                .orElseThrow(()->new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
+                                                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
-        if(!canModifyResource){
+        if (!canModifyResource) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
@@ -71,8 +74,8 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public GlobalResponse<Meta, List<LessonResponse>> getLessons(Integer id) {
         List<LessonResponse> list = lessonRepository.findAllByClassroomId(id).stream()
-                .map(lesson -> lessonMapper.toLessonResponse(lesson))
-                .collect(Collectors.toList());
+                                                    .map(lesson -> lessonMapper.toLessonResponse(lesson))
+                                                    .collect(Collectors.toList());
 
         return GlobalResponse
                 .<Meta, List<LessonResponse>>builder()
@@ -84,7 +87,7 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public GlobalResponse<Meta, LessonResponse> getLesson(Integer id) {
         Lesson lesson = lessonRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
+                                        .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
         LessonResponse response = lessonMapper.toLessonResponse(lesson);
 
@@ -95,15 +98,33 @@ public class LessonServiceImpl implements LessonService {
                 .build();
     }
 
-    private boolean isAdminOrLeader(User currentUser, Classroom classroom){
+    @Override
+    public GlobalResponse<Meta, LessonResponse> updateLesson(Integer id, UpdateLessonRequest request, User currentUser) {
+        Lesson foundLesson = lessonRepository.findById(id)
+                                             .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
+
+        if (!isAdminOrLeader(currentUser, foundLesson.getClassroom())) {
+            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+        }
+
+        if (request.name() != null) {
+            foundLesson.setName(request.name());
+        }
+        Lesson savedLesson = lessonRepository.save(foundLesson);
+
+        return GlobalResponse
+                .<Meta, LessonResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(lessonMapper.toLessonResponse(savedLesson))
+                .build();
+    }
+
+    private boolean isAdminOrLeader(User currentUser, Classroom classroom) {
         boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
         boolean isLeader = classroom.getPositions().stream()
-                .anyMatch(position -> position.getUser().equals(currentUser)
-                        && position.getSeatRole().equals(SeatRole.LEADER));
+                                    .anyMatch(position -> position.getUser().equals(currentUser)
+                                                          && position.getSeatRole().equals(SeatRole.LEADER));
 
-        if (!isAdmin && !isLeader) {
-            return false;
-        }
-        return true;
+        return isAdmin || isLeader;
     }
 }

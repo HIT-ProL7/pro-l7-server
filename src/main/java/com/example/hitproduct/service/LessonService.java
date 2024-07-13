@@ -10,7 +10,9 @@ package com.example.hitproduct.service;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.CreateLessonRequest;
+import com.example.hitproduct.domain.dto.request.UpdateLessonRequest;
 import com.example.hitproduct.domain.dto.response.LessonResponse;
+import com.example.hitproduct.domain.entity.User;
 
 import java.util.List;
 
@@ -21,4 +23,6 @@ public interface LessonService {
     GlobalResponse<Meta, List<LessonResponse>> getLessons(Integer id);
 
     GlobalResponse<Meta, LessonResponse> getLesson(Integer id);
+
+    GlobalResponse<Meta, LessonResponse> updateLesson(Integer id, UpdateLessonRequest request, User currentUser);
 }
