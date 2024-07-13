@@ -7,10 +7,16 @@ package com.example.hitproduct.security.jwt;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.ErrorMessage;
+import com.example.hitproduct.domain.dto.global.GlobalResponse;
+import com.example.hitproduct.domain.dto.global.Meta;
+import com.example.hitproduct.domain.dto.global.Status;
+import com.example.hitproduct.util.MessageSourceUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -21,22 +27,45 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
+    private final ObjectMapper      objectMapper;
+    private final MessageSourceUtil messageSourceUtil;
+    private final JwtUtils          jwtUtils;
 
     @Override
-    public void commence(HttpServletRequest request,
-                         HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+    public void commence(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException authException
+    ) throws IOException, ServletException {
+        final String BEARER_PREFIX = "Bearer ";
+        final String authHeader = request.getHeader("Authorization");
+
+        String message = null;
+        if (authHeader == null || authHeader.isBlank()) {
+            message = ErrorMessage.Auth.ERR_NOT_LOGIN;
+        }
+
+        if (authHeader != null && !authHeader.startsWith(BEARER_PREFIX)) {
+            message = ErrorMessage.Auth.ERR_MISSING_PREFIX;
+        }
+
+        if (message == null) {
+            message = jwtUtils.checkToken(authHeader.substring(BEARER_PREFIX.length()));
+        }
+
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        final Map<String, Object> body = new HashMap<>();
-        body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
-        body.put("error","Unauthorized");
-        body.put("message", authException.getMessage());
-        body.put("path",request.getServletPath());
+        GlobalResponse<Meta, Void> responseBody = GlobalResponse.<Meta, Void>builder()
+                                                                .meta(Meta.builder()
+                                                                          .status(Status.ERROR)
+                                                                          .message(messageSourceUtil.getLocalizedMessage(message))
+                                                                          .build()
+                                                                )
+                                                                .build();
 
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getOutputStream(),body);
+        objectMapper.writeValue(response.getOutputStream(), responseBody);
     }
 }

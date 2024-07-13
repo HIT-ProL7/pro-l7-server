@@ -77,19 +77,18 @@ public class GlobalExceptionHandler {
                         .build()
                 );
     }
-
+    
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleForbiddenException(ForbiddenException ex) {
+    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleForbiddenException(ForbiddenException e) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(GlobalResponse
                         .<Meta, BlankData>builder()
                         .meta(Meta.builder()
                                   .status(Status.ERROR)
-                                  .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                  .message(messageSourceUtil.getLocalizedMessage(e.getMessage()))
                                   .build()
                         )
-                        .build()
                 );
     }
 }

@@ -1,4 +1,4 @@
-package com.example.hitproduct.domain.entity;
+package com.example.hitproduct.constant;
 /*
  * @author HongAnh
  * @created 21 / 06 / 2024 - 6:50 PM

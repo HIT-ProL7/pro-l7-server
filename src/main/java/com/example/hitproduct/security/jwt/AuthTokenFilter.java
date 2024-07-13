@@ -35,9 +35,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private String AUTH_PREFIX = "Bearer ";
     private String AUTH_HEADER = "Authorization";
 
-    private final JwtUtils jwtUtils;
-    private final UserDetailsService userDetailsService;
-    private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+    private final        JwtUtils           jwtUtils;
+    private final        UserDetailsService userDetailsService;
+    private static final Logger             logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Override
     protected void doFilterInternal(
@@ -47,7 +47,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
-            if(jwt != null && jwtUtils.validateToken(jwt)){
+            if (jwt != null && jwtUtils.validateToken(jwt)) {
                 String username = jwtUtils.getUserNameFromToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -59,8 +59,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-        }catch (Exception e){
-            logger.error("Cannot set user authentication : {}",e.getMessage());
+        } catch (Exception e) {
+            logger.error("Cannot set user authentication : {}", e.getMessage());
         }
         filterChain.doFilter(request, response);
 

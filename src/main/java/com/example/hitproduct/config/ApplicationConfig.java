@@ -23,8 +23,8 @@ import java.util.Optional;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final UserRepository  userRepository;
-    private final RoleRepository  roleRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
 
     @Bean
@@ -61,7 +61,7 @@ public class ApplicationConfig {
 
     @Bean
     public CommandLineRunner initSystem() {
-        List<String> defaultRoles = List.of("USER", "ADMIN");
+        List<String> defaultRoles = List.of("ROLE_USER", "ROLE_ADMIN");
 
         defaultRoles.forEach(item -> {
             Optional<Role> found = roleRepository.findByName(item);
@@ -74,7 +74,7 @@ public class ApplicationConfig {
         final String studentCode = "2021608538";
         final String password = "B@i/wy2x";
         return args -> {
-            Role adminRole = roleRepository.findByName("ADMIN").get();
+            Role adminRole = roleRepository.findByName("ROLE_ADMIN").get();
             Optional<User> found = userRepository.findByStudentCode(studentCode);
             if (found.isEmpty()) {
                 User user = User.builder()
