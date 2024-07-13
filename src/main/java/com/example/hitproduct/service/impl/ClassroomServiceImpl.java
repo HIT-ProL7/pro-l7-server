@@ -17,6 +17,7 @@ import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
 import com.example.hitproduct.domain.dto.response.ClassroomResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.SeatRole;
+import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
 import com.example.hitproduct.exception.ForbiddenException;
@@ -57,18 +58,20 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public GlobalResponse<Meta, Void> closeClassroom(String userId, Integer classroomId) {
+    public GlobalResponse<Meta, Void> closeClassroom(User currentUser, Integer classroomId) {
         Classroom foundClassroom = classroomRepository
                 .findById(classroomId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND));
 
-        foundClassroom.getPositions()
-                      .parallelStream().filter(item ->
-                              item.getSeatRole().equals(SeatRole.LEADER)
-                              && item.getUser().getId().equals(userId)
-                      )
-                      .findFirst()
-                      .orElseThrow(() -> new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN));
+        boolean canClose = foundClassroom
+                .getPositions()
+                .parallelStream().anyMatch(item -> item.getSeatRole().equals(SeatRole.LEADER) &&
+                                                   item.getUser().getId().equals(currentUser.getId())
+                );
+
+        if (!canClose && !currentUser.getRole().getName().equals("ROLE_ADMIN")) {
+            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+        }
 
         foundClassroom.setClosed(true);
         classroomRepository.save(foundClassroom);

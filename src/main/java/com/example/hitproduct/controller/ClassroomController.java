@@ -44,6 +44,6 @@ public class ClassroomController {
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(classroomService.closeClassroom(currentUser.getId(), classroomId));
+                .body(classroomService.closeClassroom(currentUser, classroomId));
     }
 }
