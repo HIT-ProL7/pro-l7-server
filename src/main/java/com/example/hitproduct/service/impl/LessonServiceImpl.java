@@ -81,6 +81,20 @@ public class LessonServiceImpl implements LessonService {
                 .build();
     }
 
+    @Override
+    public GlobalResponse<Meta, LessonResponse> getLesson(Integer id) {
+        Lesson lesson = lessonRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
+
+        LessonResponse response = lessonMapper.toLessonResponse(lesson);
+
+        return GlobalResponse
+                .<Meta, LessonResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(response)
+                .build();
+    }
+
     private boolean isAdminOrLeader(User currentUser, Classroom classroom){
         boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
         boolean isLeader = classroom.getPositions().stream()

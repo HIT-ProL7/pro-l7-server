@@ -32,4 +32,8 @@ public interface ErrorMessage {
         String ERR_FORBIDDEN = "exception.classroom.forbidden";
         String ERR_NOTFOUND_BY_ID = "exception.classroom.not-found";
     }
+
+    interface Lesson{
+        String ERR_LESSON_NOT_FOUND = "exception.lesson.not-found";
+    }
 }

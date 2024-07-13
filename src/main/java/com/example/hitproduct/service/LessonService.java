@@ -19,4 +19,6 @@ public interface LessonService {
     GlobalResponse<Meta, LessonResponse> createLesson(CreateLessonRequest request, String studentCode);
 
     GlobalResponse<Meta, List<LessonResponse>> getLessons(Integer id);
+
+    GlobalResponse<Meta, LessonResponse> getLesson(Integer id);
 }
