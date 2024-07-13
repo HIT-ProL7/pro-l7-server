@@ -49,6 +49,11 @@ public class LessonController {
                 .body(lessonService.createLesson(request, userDetails.getUsername()));
     }
 
+    @Operation(summary = "Get lessons in classroom")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get lessons success"),
+            @ApiResponse(responseCode = "401", description = "You must login to permits")
+    })
     @GetMapping(Endpoint.V1.Lesson.GET_LESSON_IN_CLASSROOM)
     public ResponseEntity<GlobalResponse<Meta, List<LessonResponse>>> getLessons(@PathVariable(name = "classroomId") Integer id){
         return ResponseEntity
