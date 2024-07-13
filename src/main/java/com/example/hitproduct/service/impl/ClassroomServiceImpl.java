@@ -75,7 +75,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public GlobalResponse<Meta, ClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request) {
+    public GlobalResponse<Meta, GetClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request) {
         Classroom foundClassroom = classroomRepository
                 .findById(classroomId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND));
@@ -96,12 +96,12 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom updatedClassroom = classroomRepository.save(foundClassroom);
 
         return GlobalResponse
-                .<Meta, ClassroomResponse>builder()
+                .<Meta, GetClassroomResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
-                .data(classroomMapper.toClassroomResponse(updatedClassroom))
+                .data(classroomMapper.toGetClassroomResponse(updatedClassroom))
                 .build();
     }
-  
+
     public GlobalResponse<Meta, GetClassroomResponse> getMembersOfClassroom(
             User currentUser,
             Integer classroomId
@@ -156,7 +156,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         User currentUser = userOptional.get();
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
-        if(!canModifyResource){
+        if (!canModifyResource) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
@@ -225,18 +225,18 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Transactional
     public GlobalResponse<Meta, String> deleteMember(String username, Integer classId, String userId) {
         User currentUser = userRepository.findByStudentCode(username)
-                .orElseThrow(()-> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+                                         .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         Classroom classroom = classroomRepository.findById(classId)
-                .orElseThrow(()->new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
+                                                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
-        if(!canModifyResource){
+        if (!canModifyResource) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         Position position = positionRepository.findByUserIdAndClassroomId(userId, classId)
-                .orElseThrow(()->new NotFoundException(ErrorMessage.User.NOT_FOUND_IN_CLASS));
+                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.User.NOT_FOUND_IN_CLASS));
 
         positionRepository.deleteByPositionId(position.getId());
 
@@ -250,18 +250,18 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public GlobalResponse<Meta, String> editMemberRole(String username, Integer classId, String userId, String role) {
         User currentUser = userRepository.findByStudentCode(username)
-                .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+                                         .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         Classroom classroom = classroomRepository.findById(classId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
+                                                 .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
-        if(!canModifyResource){
+        if (!canModifyResource) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         Position position = positionRepository.findByUserIdAndClassroomId(userId, classId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.User.NOT_FOUND_IN_CLASS));
+                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.User.NOT_FOUND_IN_CLASS));
 
         SeatRole newRole;
         try {
@@ -304,11 +304,11 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .build();
     }
 
-    private boolean isAdminOrLeader(User currentUser, Classroom classroom){
+    private boolean isAdminOrLeader(User currentUser, Classroom classroom) {
         boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
         boolean isLeader = classroom.getPositions().stream()
-                .anyMatch(position -> position.getUser().equals(currentUser)
-                        && position.getSeatRole().equals(SeatRole.LEADER));
+                                    .anyMatch(position -> position.getUser().equals(currentUser)
+                                                          && position.getSeatRole().equals(SeatRole.LEADER));
 
         if (!isAdmin && !isLeader) {
             return false;
