@@ -39,11 +39,20 @@ public class LessonVideoController {
     }
 
     @PutMapping(Endpoint.V1.LessonVideo.LESSON_VIDEO_ID)
-    public ResponseEntity<GlobalResponse<Meta, VideoResponse>> editLessonVideo(@PathVariable(name = "videoId", required = true) Integer id,
+    public ResponseEntity<GlobalResponse<Meta, VideoResponse>> editLessonVideo(@PathVariable(name = "videoId") Integer id,
                                                                                @RequestBody LessonVideoRequest request,
                                                                                @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(videoService.editLessonVideo(id, request, userDetails.getUsername()));
+    }
+
+    @DeleteMapping(Endpoint.V1.LessonVideo.DELETE_LESSON_VIDEO)
+    public ResponseEntity<GlobalResponse<Meta, String>> deleteLessonVideo(@PathVariable(name = "videoId")Integer videoId,
+                                                                          @PathVariable(name = "lessonId") Integer lessonId,
+                                                                          @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(videoService.deleteLessonVideo(videoId, lessonId, userDetails.getUsername()));
     }
 }

@@ -7,10 +7,12 @@ package com.example.hitproduct.repository;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.domain.entity.Lesson;
 import com.example.hitproduct.domain.entity.LessonVideo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LessonVideoRepository extends JpaRepository<LessonVideo, Integer> {
+    boolean existsByLesson(Lesson lesson);
 }

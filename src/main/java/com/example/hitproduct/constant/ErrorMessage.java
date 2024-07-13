@@ -8,6 +8,7 @@ package com.example.hitproduct.constant;
  */
 
 public interface ErrorMessage {
+
     interface Auth {
         String ERR_EXISTS_USERNAME    = "exception.user.exist";
         String ALREADY_RESET_PASSWORD = "exception.auth.already-reset-password";
@@ -33,7 +34,11 @@ public interface ErrorMessage {
         String ERR_NOTFOUND_BY_ID = "exception.classroom.not-found";
     }
 
-    interface Lesson{
+    interface Lesson {
         String ERR_LESSON_NOT_FOUND = "exception.lesson.not-found";
+    }
+
+    interface LessonVideo {
+        String ERR_LESSON_VIDEO_NOT_FOUND = "exception.video.not-found";
     }
 }
