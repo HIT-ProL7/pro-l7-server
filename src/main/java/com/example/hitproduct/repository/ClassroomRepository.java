@@ -11,7 +11,10 @@ import com.example.hitproduct.domain.entity.Classroom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ClassroomRepository extends JpaRepository<Classroom, Integer> {
     boolean existsByName(String name);
+    List<Classroom> findAllByClosed(boolean closed);
 }
