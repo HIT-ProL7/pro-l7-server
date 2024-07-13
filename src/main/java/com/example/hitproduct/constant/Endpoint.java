@@ -30,5 +30,9 @@ public interface Endpoint {
             String DELETE_MEMBER = CLASSROOM_ID + "/members" + "/{userId}";
             String EDIT_MEMBER_ROLE = CLASSROOM_ID + "/members" + "/{userId}/positions";
         }
+
+        interface Lesson{
+            String PREFIX = V1.PREFIX + "/lessons";
+        }
     }
 }
