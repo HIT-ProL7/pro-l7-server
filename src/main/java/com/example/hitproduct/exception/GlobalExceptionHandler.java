@@ -92,4 +92,19 @@ public class GlobalExceptionHandler {
                         .build()
                 );
     }
+
+    @ExceptionHandler(InternalServerErrorException.class)
+    public ResponseEntity<GlobalResponse<Meta, Void>> handleInternalServerErrorException(InternalServerErrorException ex) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(GlobalResponse
+                        .<Meta, Void>builder()
+                        .meta(Meta.builder()
+                                  .status(Status.ERROR)
+                                  .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                  .build()
+                        )
+                        .build()
+                );
+    }
 }

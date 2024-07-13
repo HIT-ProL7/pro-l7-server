@@ -52,6 +52,11 @@ public class User implements UserDetails {
     String fullName;
 
     String avatarUrl;
+    String bannerUrl;
+
+    String githubUrl;
+    String facebookUrl;
+
 
     @CreationTimestamp
     Timestamp createdAt;
@@ -70,7 +75,13 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Position> positions;
+
     Integer resetPasswordCount;
+
+    // khoá 16 -> cohort 16 :v
+    Integer cohort;
+
+    String description;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

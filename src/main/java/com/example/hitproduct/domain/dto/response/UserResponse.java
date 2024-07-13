@@ -24,4 +24,6 @@ public class UserResponse {
     String    email;
     Timestamp createdAt;
     Timestamp updatedAt;
+    Integer   cohort;
+    String    description;
 }
