@@ -13,6 +13,9 @@ import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.LessonVideoRequest;
 import com.example.hitproduct.domain.dto.response.VideoResponse;
 import com.example.hitproduct.service.LessonVideoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +33,13 @@ import org.springframework.web.bind.annotation.*;
 public class LessonVideoController {
     LessonVideoService videoService;
 
+    @Operation(summary = "Create a new lesson video")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Video created successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping(Endpoint.V1.LessonVideo.PREFIX)
     public ResponseEntity<GlobalResponse<Meta, VideoResponse>> createVideo(@RequestBody LessonVideoRequest request,
                                                                            @AuthenticationPrincipal UserDetails userDetails){
@@ -38,6 +48,13 @@ public class LessonVideoController {
                 .body(videoService.createLessonVideo(request, userDetails.getUsername()));
     }
 
+    @Operation(summary = "Edit an existing lesson video")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Video edited successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PutMapping(Endpoint.V1.LessonVideo.LESSON_VIDEO_ID)
     public ResponseEntity<GlobalResponse<Meta, VideoResponse>> editLessonVideo(@PathVariable(name = "videoId") Integer id,
                                                                                @RequestBody LessonVideoRequest request,
@@ -47,6 +64,13 @@ public class LessonVideoController {
                 .body(videoService.editLessonVideo(id, request, userDetails.getUsername()));
     }
 
+    @Operation(summary = "Delete a lesson video")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Video deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @DeleteMapping(Endpoint.V1.LessonVideo.DELETE_LESSON_VIDEO)
     public ResponseEntity<GlobalResponse<Meta, String>> deleteLessonVideo(@PathVariable(name = "videoId")Integer videoId,
                                                                           @PathVariable(name = "lessonId") Integer lessonId,
