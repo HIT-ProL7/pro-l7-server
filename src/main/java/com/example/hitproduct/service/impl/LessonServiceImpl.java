@@ -21,6 +21,7 @@ import com.example.hitproduct.domain.mapper.LessonMapper;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.repository.LessonRepository;
+import com.example.hitproduct.repository.LessonVideoRepository;
 import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.service.LessonService;
 import lombok.AccessLevel;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
     LessonRepository lessonRepository;
+    LessonVideoRepository videoRepository;
     UserRepository userRepository;
     ClassroomRepository classroomRepository;
 
@@ -60,6 +62,8 @@ public class LessonServiceImpl implements LessonService {
         lesson.setClassroom(classroom);
 
         lesson = lessonRepository.save(lesson);
+        lesson.addLessonVideo(request.getVideo());
+        videoRepository.save(request.getVideo());
 
         return GlobalResponse
                 .<Meta, LessonResponse>builder()

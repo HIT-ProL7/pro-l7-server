@@ -19,7 +19,7 @@ public interface ErrorMessage {
     }
     
     interface User {
-        String ERR_NOT_FOUND = "exception.user.notFound";
+        String ERR_NOT_FOUND = "exception.user.not-found";
         String MISMATCHED_CONFIRM_PASSWORD = "exception.user.mismatched-confirm-password";
         String MISMATCHED_OLD_PASSWORD  = "exception.user.mismatched-old-password";
         String UNAUTHORIZED = "exception.user.unauthorized";

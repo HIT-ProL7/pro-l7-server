@@ -38,5 +38,9 @@ public interface Endpoint {
             String GET_LESSON_IN_CLASSROOM = PREFIX + "/classroom/{classroomId}";
             String LESSON_ID = PREFIX + "/{lessonId}";
         }
+
+        interface LessonVideo{
+            String PREFIX = V1.PREFIX + "/videos";
+        }
     }
 }

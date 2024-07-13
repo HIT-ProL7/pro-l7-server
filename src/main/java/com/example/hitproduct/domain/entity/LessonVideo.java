@@ -7,6 +7,7 @@ package com.example.hitproduct.domain.entity;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -29,5 +30,6 @@ public class LessonVideo {
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
+    @JsonIgnore
     Lesson lesson;
 }
