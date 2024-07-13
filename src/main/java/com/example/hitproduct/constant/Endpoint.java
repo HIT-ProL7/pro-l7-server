@@ -20,9 +20,10 @@ public interface Endpoint {
             String FORGOT_PASSWORD = PREFIX + "/forgot-password/{studentCode}";
         }
 
-        interface Classroom{
+        interface Classroom {
             String PREFIX = V1.PREFIX + "/classrooms";
             String CREATE = PREFIX + "/create";
+            String UPDATE = PREFIX + "/{classroomId}";
             String GET_MEMBERS = PREFIX + "/{classroomId}" + "/members";
             String CLASSROOM_ID = PREFIX + "/{classroomId}";
             String ADD_MEMBER = CLASSROOM_ID + "/members";

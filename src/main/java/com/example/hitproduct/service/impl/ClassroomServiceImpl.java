@@ -14,6 +14,7 @@ import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
+import com.example.hitproduct.domain.dto.request.EditClassroomRequest;
 import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
 import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
@@ -74,6 +75,33 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public GlobalResponse<Meta, ClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request) {
+        Classroom foundClassroom = classroomRepository
+                .findById(classroomId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND));
+
+        boolean canUpdate = foundClassroom
+                .getPositions()
+                .parallelStream()
+                .anyMatch(item -> item.getSeatRole().equals(SeatRole.LEADER) && item.getUser().getId().equals(currentUser.getId()));
+
+        if (!canUpdate && !currentUser.getRole().getName().equals("ROLE_ADMIN")) {
+            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+        }
+
+        if (request.getName() != null) foundClassroom.setName(request.getName());
+        if (request.getDescription() != null) foundClassroom.setDescription(request.getDescription());
+        if (request.getRoadmap() != null) foundClassroom.setRoadmap(request.getRoadmap());
+
+        Classroom updatedClassroom = classroomRepository.save(foundClassroom);
+
+        return GlobalResponse
+                .<Meta, ClassroomResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(classroomMapper.toClassroomResponse(updatedClassroom))
+                .build();
+    }
+  
     public GlobalResponse<Meta, GetClassroomResponse> getMembersOfClassroom(
             User currentUser,
             Integer classroomId

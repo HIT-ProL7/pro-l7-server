@@ -31,33 +31,63 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GlobalExceptionHandler {
-    private final MessageSource messageSource;
+    private final MessageSource     messageSource;
     private final MessageSourceUtil messageSourceUtil;
 
     @ExceptionHandler(AlreadyExistsException.class)
-    public ResponseEntity<RestData<?>> handleUserAlreadyExistsException(AlreadyExistsException ex){
+    public ResponseEntity<RestData<?>> handleUserAlreadyExistsException(AlreadyExistsException ex) {
         String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());
         log.error(message, ex);
         return VsResponseUtil.error(ex.getStatus(), message);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<RestData<?>> handleUserNotFoundException(UsernameNotFoundException ex){
+    public ResponseEntity<RestData<?>> handleUserNotFoundException(UsernameNotFoundException ex) {
         String message = messageSource.getMessage(ex.getMessage(), null, LocaleContextHolder.getLocale());
         log.error(message, ex);
         return VsResponseUtil.error(HttpStatus.BAD_REQUEST, message);
     }
 
     @ExceptionHandler(AppException.class)
-    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleAppException(AppException ex){
+    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleAppException(AppException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(GlobalResponse
                         .<Meta, BlankData>builder()
                         .meta(Meta.builder()
-                                .status(Status.ERROR)
-                                .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
-                                .build()
+                                  .status(Status.ERROR)
+                                  .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                  .build()
+                        )
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleNotFoundException(NotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(GlobalResponse
+                        .<Meta, BlankData>builder()
+                        .meta(Meta.builder()
+                                  .status(Status.ERROR)
+                                  .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                  .build()
+                        )
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleForbiddenException(ForbiddenException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(GlobalResponse
+                        .<Meta, BlankData>builder()
+                        .meta(Meta.builder()
+                                  .status(Status.ERROR)
+                                  .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                  .build()
                         )
                         .build()
                 );

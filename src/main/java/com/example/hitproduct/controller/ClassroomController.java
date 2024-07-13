@@ -13,6 +13,8 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
+import com.example.hitproduct.domain.dto.request.EditClassroomRequest;
+import com.example.hitproduct.domain.dto.response.ClassroomResponse;
 import com.example.hitproduct.domain.dto.response.CreateClassroomResponse;
 import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.entity.User;
@@ -27,6 +29,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +53,23 @@ public class ClassroomController {
                 .status(HttpStatus.CREATED)
                 .body(classroomService.createClass(request));
     }
-
+    
+    @Operation(summary = "Update a new classroom")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Classroom updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request format or data provided"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated")
+    })
+    @PutMapping(Endpoint.V1.Classroom.UPDATE)
+    public ResponseEntity<GlobalResponse<Meta, ClassroomResponse>> editClassroom(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Integer classroomId,
+            @RequestBody EditClassroomRequest request
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(classroomService.editClassroom(currentUser, classroomId, request));
+      
     @Operation(summary = "Add a member to a classroom")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Member added successfully"),
