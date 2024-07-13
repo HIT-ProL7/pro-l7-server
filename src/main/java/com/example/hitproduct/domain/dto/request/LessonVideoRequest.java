@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateVideoRequest {
+public class LessonVideoRequest {
     String title;
     String description;
     String url;

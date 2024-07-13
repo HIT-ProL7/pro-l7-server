@@ -10,7 +10,7 @@ package com.example.hitproduct.controller;
 import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
-import com.example.hitproduct.domain.dto.request.CreateVideoRequest;
+import com.example.hitproduct.domain.dto.request.LessonVideoRequest;
 import com.example.hitproduct.domain.dto.response.VideoResponse;
 import com.example.hitproduct.service.LessonVideoService;
 import lombok.AccessLevel;
@@ -21,9 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,10 +31,19 @@ public class LessonVideoController {
     LessonVideoService videoService;
 
     @PostMapping(Endpoint.V1.LessonVideo.PREFIX)
-    public ResponseEntity<GlobalResponse<Meta, VideoResponse>> createVideo(@RequestBody CreateVideoRequest request,
+    public ResponseEntity<GlobalResponse<Meta, VideoResponse>> createVideo(@RequestBody LessonVideoRequest request,
                                                                            @AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(videoService.createLessonVideo(request, userDetails.getUsername()));
+    }
+
+    @PutMapping(Endpoint.V1.LessonVideo.LESSON_VIDEO_ID)
+    public ResponseEntity<GlobalResponse<Meta, VideoResponse>> editLessonVideo(@PathVariable(name = "videoId", required = true) Integer id,
+                                                                               @RequestBody LessonVideoRequest request,
+                                                                               @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(videoService.editLessonVideo(id, request, userDetails.getUsername()));
     }
 }

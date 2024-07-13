@@ -9,10 +9,12 @@ package com.example.hitproduct.service;
 
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
-import com.example.hitproduct.domain.dto.request.CreateVideoRequest;
+import com.example.hitproduct.domain.dto.request.LessonVideoRequest;
 import com.example.hitproduct.domain.dto.response.VideoResponse;
 
 public interface LessonVideoService {
 
-    GlobalResponse<Meta, VideoResponse> createLessonVideo(CreateVideoRequest request, String studentCode);
+    GlobalResponse<Meta, VideoResponse> createLessonVideo(LessonVideoRequest request, String studentCode);
+
+    GlobalResponse<Meta, VideoResponse> editLessonVideo(Integer id,LessonVideoRequest request, String studentCode);
 }
