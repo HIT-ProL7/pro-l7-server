@@ -33,7 +33,8 @@ public interface Endpoint {
 
         interface Lesson{
             String PREFIX = V1.PREFIX + "/lessons";
-            String GET_LESSON_IN_CLASSROOM = PREFIX + "/{classroomId}";
+            String GET_LESSON_IN_CLASSROOM = PREFIX + "/classroom/{classroomId}";
+            String LESSON_ID = PREFIX + "/{lessonId}";
         }
     }
 }

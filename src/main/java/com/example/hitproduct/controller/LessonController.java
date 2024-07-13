@@ -60,4 +60,16 @@ public class LessonController {
                 .status(HttpStatus.OK)
                 .body(lessonService.getLessons(id));
     }
+
+    @Operation(summary = "Get lesson in classroom")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get lesson success"),
+            @ApiResponse(responseCode = "401", description = "You must login to permits")
+    })
+    @GetMapping(Endpoint.V1.Lesson.LESSON_ID)
+    public ResponseEntity<GlobalResponse<Meta, LessonResponse>> getLesson(@PathVariable(name = "lessonId") Integer id){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(lessonService.getLesson(id));
+    }
 }
