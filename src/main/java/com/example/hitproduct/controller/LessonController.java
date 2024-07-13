@@ -24,9 +24,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,5 +47,12 @@ public class LessonController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(lessonService.createLesson(request, userDetails.getUsername()));
+    }
+
+    @GetMapping(Endpoint.V1.Lesson.GET_LESSON_IN_CLASSROOM)
+    public ResponseEntity<GlobalResponse<Meta, List<LessonResponse>>> getLessons(@PathVariable(name = "classroomId") Integer id){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(lessonService.getLessons(id));
     }
 }

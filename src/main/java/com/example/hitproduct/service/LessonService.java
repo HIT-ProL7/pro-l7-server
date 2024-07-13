@@ -12,7 +12,11 @@ import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.CreateLessonRequest;
 import com.example.hitproduct.domain.dto.response.LessonResponse;
 
+import java.util.List;
+
 public interface LessonService {
 
     GlobalResponse<Meta, LessonResponse> createLesson(CreateLessonRequest request, String studentCode);
+
+    GlobalResponse<Meta, List<LessonResponse>> getLessons(Integer id);
 }
