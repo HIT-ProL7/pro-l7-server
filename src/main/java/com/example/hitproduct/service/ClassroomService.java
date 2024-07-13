@@ -7,6 +7,7 @@ package com.example.hitproduct.service;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.domain.dto.global.BlankData;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
@@ -21,6 +22,8 @@ import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import java.util.List;
 
 public interface ClassroomService {
+    GlobalResponse<Meta, Void> closeClassroom(User currentUser, Integer classroomId);
+
     GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request);
 
     GlobalResponse<Meta, GetClassroomResponse> getMembersOfClassroom(User currentUser, Integer classroomId);

@@ -9,6 +9,8 @@ package com.example.hitproduct.service.impl;
 
 import com.example.hitproduct.constant.CommonConstant;
 import com.example.hitproduct.constant.ErrorMessage;
+import com.example.hitproduct.constant.SuccessMessage;
+import com.example.hitproduct.domain.dto.global.BlankData;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
@@ -31,6 +33,7 @@ import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.repository.PositionRepository;
 import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.service.ClassroomService;
+import com.example.hitproduct.util.MessageSourceUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -53,8 +56,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     UserRepository      userRepository;
     PositionRepository  positionRepository;
 
-    ClassroomMapper classroomMapper;
-    UserMapper      userMapper;
+    ClassroomMapper   classroomMapper;
+    UserMapper        userMapper;
+    MessageSourceUtil messageSourceUtil;
 
     @Override
     public GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request) {
@@ -63,7 +67,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             throw new AlreadyExistsException(ErrorMessage.Classroom.ERR_EXISTS_CLASSNAME);
         }
         Classroom classroom = classroomMapper.toClassroom(request);
-        classroom.setStatus(true);
+        classroom.setClosed(false);
 
         classroom = classroomRepository.save(classroom);
 
@@ -75,6 +79,34 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
+    public GlobalResponse<Meta, Void> closeClassroom(User currentUser, Integer classroomId) {
+        Classroom foundClassroom = classroomRepository
+                .findById(classroomId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND));
+
+        boolean canClose = foundClassroom
+                .getPositions()
+                .parallelStream().anyMatch(item -> item.getSeatRole().equals(SeatRole.LEADER) &&
+                                                   item.getUser().getId().equals(currentUser.getId())
+                );
+
+        if (!canClose && !currentUser.getRole().getName().equals("ROLE_ADMIN")) {
+            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+        }
+
+        foundClassroom.setClosed(true);
+        classroomRepository.save(foundClassroom);
+
+        return GlobalResponse
+                .<Meta, Void>builder()
+                .meta(Meta.builder()
+                          .status(Status.SUCCESS)
+                          .message(messageSourceUtil.getLocalizedMessage(SuccessMessage.Classroom.CLOSED))
+                          .build()
+                )
+                .build();
+    }
+
     public GlobalResponse<Meta, GetClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request) {
         Classroom foundClassroom = classroomRepository
                 .findById(classroomId)

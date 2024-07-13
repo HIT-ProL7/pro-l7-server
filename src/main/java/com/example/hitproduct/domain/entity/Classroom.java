@@ -45,7 +45,7 @@ public class Classroom {
     Timestamp startedDate;
 
     @Column(nullable = false)
-    boolean status;
+    boolean closed;
 
     @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Position> positions;

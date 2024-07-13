@@ -23,6 +23,7 @@ public interface Endpoint {
         interface Classroom {
             String PREFIX = V1.PREFIX + "/classrooms";
             String CREATE = PREFIX + "/create";
+            String CLOSE  = PREFIX + "/{classroomId}" + "/close";
             String UPDATE = PREFIX + "/{classroomId}";
             String GET_MEMBERS = PREFIX + "/{classroomId}" + "/members";
             String CLASSROOM_ID = PREFIX + "/{classroomId}";
