@@ -52,6 +52,11 @@ public class User implements UserDetails {
     String fullName;
 
     String avatarUrl;
+    String bannerUrl;
+
+    String githubUrl;
+    String facebookUrl;
+
 
     @CreationTimestamp
     Timestamp createdAt;

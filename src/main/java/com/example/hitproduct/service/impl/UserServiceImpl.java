@@ -17,7 +17,9 @@ import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.AppException;
+import com.example.hitproduct.exception.InternalServerErrorException;
 import com.example.hitproduct.repository.UserRepository;
+import com.example.hitproduct.service.CloudinaryService;
 import com.example.hitproduct.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +33,10 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    UserRepository  userRepository;
-    UserMapper      userMapper;
-    PasswordEncoder passwordEncoder;
+    UserRepository    userRepository;
+    UserMapper        userMapper;
+    PasswordEncoder   passwordEncoder;
+    CloudinaryService cloudinaryService;
 
     @Override
     public GlobalResponse<Meta, UserResponse> getUserByStudentCode(
@@ -61,6 +64,22 @@ public class UserServiceImpl implements UserService {
         if (request.email() != null) user.setEmail(request.email());
         if (request.cohort() != null) user.setCohort(request.cohort());
         if (request.description() != null) user.setDescription(request.description());
+        if (request.githubUrl() != null) user.setGithubUrl(request.githubUrl());
+        if (request.facebookUrl() != null) user.setFacebookUrl(request.facebookUrl());
+        if (request.avatar() != null) {
+            try {
+                cloudinaryService.uploadImage(request.avatar().getBytes());
+            } catch (Exception e) {
+                throw new InternalServerErrorException("Failed to upload avatar image.");
+            }
+        }
+        if (request.banner() != null) {
+            try {
+                cloudinaryService.uploadImage(request.banner().getBytes());
+            } catch (Exception e) {
+                throw new InternalServerErrorException("Failed to upload banner image.");
+            }
+        }
 
         return GlobalResponse
                 .<Meta, UserResponse>builder()

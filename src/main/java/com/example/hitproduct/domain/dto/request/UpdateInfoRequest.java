@@ -9,6 +9,7 @@ package com.example.hitproduct.domain.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 public record UpdateInfoRequest(
         @NotEmpty(message = "Email is not empty")
@@ -17,7 +18,14 @@ public record UpdateInfoRequest(
         @NotEmpty(message = "Username is not empty")
         String fullName,
 
+        // khoá
         Integer cohort,
+
+        MultipartFile avatar,
+        MultipartFile banner,
+
+        String githubUrl,
+        String facebookUrl,
 
         @Length(max = 255, message = "Description must be up to 255 characters.")
         String description
