@@ -20,6 +20,7 @@ import lombok.experimental.FieldDefaults;
 public class CreateLessonRequest {
     @NotEmpty(message = ValidationMessage.Lesson.LESSON_NAME_NO_EMPTY)
     String name;
+    String content;
 
     @NotEmpty(message = ValidationMessage.Lesson.CLASSROOM_ID_NOT_EMPTY)
     Integer classroomId;
