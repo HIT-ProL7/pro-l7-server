@@ -42,6 +42,7 @@ public interface Endpoint {
         interface LessonVideo{
             String PREFIX = V1.PREFIX + "/videos";
             String LESSON_VIDEO_ID = PREFIX + "/{videoId}";
+            String DELETE_LESSON_VIDEO = LESSON_VIDEO_ID + "/{lessonId}";
         }
     }
 }

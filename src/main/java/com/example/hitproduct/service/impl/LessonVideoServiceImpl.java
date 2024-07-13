@@ -74,7 +74,7 @@ public class LessonVideoServiceImpl implements LessonVideoService {
                                         .orElseThrow(()->new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
         boolean canModifyResource = isAdminOrLeader(currentUser, lesson.getClassroom());
-        if(!canModifyResource){
+        if (!canModifyResource) {
             throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
         }
 
@@ -88,6 +88,38 @@ public class LessonVideoServiceImpl implements LessonVideoService {
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(videoMapper.toVideoResponse(video))
                 .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, String> deleteLessonVideo(Integer id, Integer lessonId, String studentCode) {
+        User currentUser = userRepository.findByStudentCode(studentCode)
+                                         .orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+
+        Lesson lesson = lessonRepository.findById(lessonId)
+                                        .orElseThrow(()->new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
+
+        boolean canModifyResource = isAdminOrLeader(currentUser, lesson.getClassroom());
+        if (!canModifyResource) {
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
+
+        if (videoRepository.existsByLesson(lesson)){
+            LessonVideo video = videoRepository.findById(id)
+                                               .orElseThrow(() -> new NotFoundException(ErrorMessage.LessonVideo.ERR_LESSON_VIDEO_NOT_FOUND));
+
+            videoRepository.delete(video);
+            return GlobalResponse
+                    .<Meta, String>builder()
+                    .meta(Meta.builder().status(Status.SUCCESS).build())
+                    .data("Delete lesson video successfully!")
+                    .build();
+        }else{
+            return GlobalResponse
+                    .<Meta, String>builder()
+                    .meta(Meta.builder().status(Status.ERROR).build())
+                    .data("Not found lesson video in classroom")
+                    .build();
+        }
     }
 
     private boolean isAdminOrLeader(User currentUser, Classroom classroom) {

@@ -17,4 +17,6 @@ public interface LessonVideoService {
     GlobalResponse<Meta, VideoResponse> createLessonVideo(LessonVideoRequest request, String studentCode);
 
     GlobalResponse<Meta, VideoResponse> editLessonVideo(Integer id,LessonVideoRequest request, String studentCode);
+
+    GlobalResponse<Meta, String> deleteLessonVideo(Integer videoId, Integer lessonId, String studentCode);
 }
