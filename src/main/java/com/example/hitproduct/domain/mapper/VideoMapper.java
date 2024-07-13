@@ -7,17 +7,21 @@ package com.example.hitproduct.domain.mapper;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
-import com.example.hitproduct.domain.dto.request.CreateVideoRequest;
+import com.example.hitproduct.domain.dto.request.LessonVideoRequest;
 import com.example.hitproduct.domain.dto.response.VideoResponse;
 import com.example.hitproduct.domain.entity.LessonVideo;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public interface VideoMapper {
     VideoMapper INSTANCE = Mappers.getMapper(VideoMapper.class);
 
-    LessonVideo toLessonVideo(CreateVideoRequest request);
+    LessonVideo toLessonVideo(LessonVideoRequest request);
 
     VideoResponse toVideoResponse(LessonVideo lessonVideo);
+
+    void updateLessonVideoFromDto(LessonVideoRequest request, @MappingTarget LessonVideo lessonVideo);
 }

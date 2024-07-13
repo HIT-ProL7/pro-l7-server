@@ -12,7 +12,7 @@ import com.example.hitproduct.constant.SeatRole;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
-import com.example.hitproduct.domain.dto.request.CreateVideoRequest;
+import com.example.hitproduct.domain.dto.request.LessonVideoRequest;
 import com.example.hitproduct.domain.dto.response.VideoResponse;
 import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Lesson;
@@ -41,7 +41,7 @@ public class LessonVideoServiceImpl implements LessonVideoService {
     VideoMapper videoMapper;
 
     @Override
-    public GlobalResponse<Meta, VideoResponse> createLessonVideo(CreateVideoRequest request, String studentCode) {
+    public GlobalResponse<Meta, VideoResponse> createLessonVideo(LessonVideoRequest request, String studentCode) {
         User currentUser = userRepository.findByStudentCode(studentCode)
                                          .orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
@@ -56,6 +56,31 @@ public class LessonVideoServiceImpl implements LessonVideoService {
         LessonVideo video = videoMapper.toLessonVideo(request);
         video.setLesson(lesson);
 
+        video = videoRepository.save(video);
+
+        return GlobalResponse
+                .<Meta, VideoResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(videoMapper.toVideoResponse(video))
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, VideoResponse> editLessonVideo(Integer id, LessonVideoRequest request, String studentCode) {
+        User currentUser = userRepository.findByStudentCode(studentCode)
+                                         .orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+
+        Lesson lesson = lessonRepository.findById(request.getLessonId())
+                                        .orElseThrow(()->new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
+
+        boolean canModifyResource = isAdminOrLeader(currentUser, lesson.getClassroom());
+        if(!canModifyResource){
+            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        }
+
+        LessonVideo video = videoRepository.findById(id).get();
+
+        videoMapper.updateLessonVideoFromDto(request, video);
         video = videoRepository.save(video);
 
         return GlobalResponse
