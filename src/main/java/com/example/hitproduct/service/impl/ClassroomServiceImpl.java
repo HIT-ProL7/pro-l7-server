@@ -107,12 +107,16 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .build();
     }
 
-    boolean canUpdate = foundClassroom
-            .getPositions()
-            .parallelStream()
-            .anyMatch(item -> item.getSeatRole().equals(SeatRole.LEADER) && item.getUser().getId().equals(currentUser.getId()));
-
     public GlobalResponse<Meta, GetClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request) {
+        Classroom foundClassroom = classroomRepository
+                .findById(classroomId)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOT_FOUND));
+
+        boolean canUpdate = foundClassroom
+                .getPositions()
+                .parallelStream()
+                .anyMatch(item -> item.getSeatRole().equals(SeatRole.LEADER) && item.getUser().getId().equals(currentUser.getId()));
+
         if (!canUpdate && !currentUser.getRole().getName().equals("ROLE_ADMIN")) {
             throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
         }

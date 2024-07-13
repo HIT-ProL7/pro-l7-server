@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
                         .build()
                 );
     }
-    
+
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<GlobalResponse<Meta, BlankData>> handleForbiddenException(ForbiddenException e) {
         return ResponseEntity
@@ -89,6 +89,7 @@ public class GlobalExceptionHandler {
                                   .message(messageSourceUtil.getLocalizedMessage(e.getMessage()))
                                   .build()
                         )
+                        .build()
                 );
     }
 }
