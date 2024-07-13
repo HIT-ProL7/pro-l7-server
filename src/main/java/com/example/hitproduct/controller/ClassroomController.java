@@ -75,6 +75,24 @@ public class ClassroomController {
                 .body(classroomService.editClassroom(currentUser, classroomId, request));
     }
 
+    @Operation(summary = "Close an opening new classroom")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Classroom closed successfully"),
+                    @ApiResponse(responseCode = "400", description = "Invalid request format or data provided"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized - user not authenticated")
+            }
+    )
+    @PutMapping(Endpoint.V1.Classroom.CLOSE)
+    public ResponseEntity<GlobalResponse<Meta, Void>> closeClassroom(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Integer classroomId
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(classroomService.closeClassroom(currentUser, classroomId));
+    }
+
     @Operation(summary = "Add a member to a classroom")
     @ApiResponses(
             value = {
