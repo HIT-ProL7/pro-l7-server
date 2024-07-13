@@ -11,6 +11,7 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.AddMemberRequest;
 import com.example.hitproduct.domain.dto.request.CreateClassroomRequest;
+import com.example.hitproduct.domain.dto.request.EditClassroomRequest;
 import com.example.hitproduct.domain.dto.response.GetClassroomResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.User;
@@ -35,4 +36,6 @@ public interface ClassroomService {
     GlobalResponse<Meta, String> deleteMember(String username, Integer classId, String userId);
 
     GlobalResponse<Meta, String> editMemberRole(String username, Integer classroomId, String userId, String newRole);
+
+    GlobalResponse<Meta, GetClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request);
 }
