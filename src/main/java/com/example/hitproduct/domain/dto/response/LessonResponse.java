@@ -20,5 +20,6 @@ import java.sql.Timestamp;
 public class LessonResponse {
     Integer id;
     String name;
+    String content;
     Timestamp createAt;
 }

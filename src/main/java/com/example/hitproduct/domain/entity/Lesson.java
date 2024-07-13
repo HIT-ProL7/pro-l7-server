@@ -28,6 +28,7 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     String name;
+    String content;
 
     @CreationTimestamp
     Timestamp createAt;
