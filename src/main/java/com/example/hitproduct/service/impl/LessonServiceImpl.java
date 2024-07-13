@@ -29,6 +29,10 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -61,6 +65,19 @@ public class LessonServiceImpl implements LessonService {
                 .<Meta, LessonResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(lessonMapper.toLessonResponse(lesson))
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, List<LessonResponse>> getLessons(Integer id) {
+        List<LessonResponse> list = lessonRepository.findAllByClassroomId(id).stream()
+                .map(lesson -> lessonMapper.toLessonResponse(lesson))
+                .collect(Collectors.toList());
+
+        return GlobalResponse
+                .<Meta, List<LessonResponse>>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(list)
                 .build();
     }
 
