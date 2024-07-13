@@ -23,4 +23,9 @@ public interface ValidationMessage {
     interface Classroom{
         String CLASSNAME_NOT_BLANK = "Classroom name must not empty";
     }
+
+    interface Lesson{
+        String LESSON_NAME_NO_EMPTY = "Lesson cannot empty";
+        String CLASSROOM_ID_NOT_EMPTY = "Classroom id not empty";
+    }
 }

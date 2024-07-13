@@ -53,6 +53,7 @@ public class WebSecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                     .requestMatchers(Endpoint.V1.Auth.PREFIX + CATCH_ALL_WILDCARD).permitAll()
                     .requestMatchers(Endpoint.V1.Auth.REGISTER).hasRole("ADMIN")
                     .requestMatchers(Endpoint.V1.Classroom.PREFIX + CATCH_ALL_WILDCARD).hasRole("ADMIN")
