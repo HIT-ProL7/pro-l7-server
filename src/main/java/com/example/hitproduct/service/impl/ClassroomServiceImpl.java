@@ -240,7 +240,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms() {
         List<GetClassroomResponse> responses = new ArrayList<>();
-        List<Classroom> classrooms = classroomRepository.findAll();
+        List<Classroom> classrooms = classroomRepository.findAllByClosed(CommonConstant.Classroom.IS_CLOSE);
         for (Classroom classroom : classrooms) {
             GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
             responses.add(classroomResponse);
