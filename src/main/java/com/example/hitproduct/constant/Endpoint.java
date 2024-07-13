@@ -20,9 +20,23 @@ public interface Endpoint {
             String FORGOT_PASSWORD = PREFIX + "/forgot-password/{studentCode}";
         }
 
-        interface Classroom{
+        interface Classroom {
             String PREFIX = V1.PREFIX + "/classrooms";
             String CREATE = PREFIX + "/create";
+            String CLOSE  = PREFIX + "/{classroomId}" + "/close";
+            String UPDATE = PREFIX + "/{classroomId}";
+            String GET_MEMBERS = PREFIX + "/{classroomId}" + "/members";
+            String CLASSROOM_ID = PREFIX + "/{classroomId}";
+            String ADD_MEMBER = CLASSROOM_ID + "/members";
+            String MY_CLASS = PREFIX + "/my-class";
+            String DELETE_MEMBER = CLASSROOM_ID + "/members" + "/{userId}";
+            String EDIT_MEMBER_ROLE = CLASSROOM_ID + "/members" + "/{userId}/positions";
+        }
+
+        interface Lesson{
+            String PREFIX = V1.PREFIX + "/lessons";
+            String GET_LESSON_IN_CLASSROOM = PREFIX + "/classroom/{classroomId}";
+            String LESSON_ID = PREFIX + "/{lessonId}";
         }
     }
 }

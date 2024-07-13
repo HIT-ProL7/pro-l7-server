@@ -1,27 +1,22 @@
 package com.example.hitproduct.domain.dto.request;
 /*
  * @author HongAnh
- * @created 23 / 06 / 2024 - 4:09 PM
+ * @created 25 / 06 / 2024 - 8:07 PM
  * @project pro-l7-server
  * @social Github: https://github.com/lehonganh0201
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
-import com.example.hitproduct.constant.ValidationMessage;
-import jakarta.validation.constraints.NotEmpty;
+import com.example.hitproduct.constant.SeatRole;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.sql.Timestamp;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateClassroomRequest {
-    @NotEmpty(message = ValidationMessage.Classroom.CLASSNAME_NOT_BLANK)
-    String name;
-    String description;
-    Timestamp startedDate;
+public class AddMemberRequest {
+    String studentCode;
+    SeatRole seatRole;
 }

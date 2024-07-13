@@ -1,14 +1,12 @@
-package com.example.hitproduct.domain.dto.request;
+package com.example.hitproduct.domain.dto.response;
 /*
  * @author HongAnh
- * @created 23 / 06 / 2024 - 4:09 PM
+ * @created 13 / 07 / 2024 - 4:52 PM
  * @project pro-l7-server
  * @social Github: https://github.com/lehonganh0201
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
-import com.example.hitproduct.constant.ValidationMessage;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,9 +17,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateClassroomRequest {
-    @NotEmpty(message = ValidationMessage.Classroom.CLASSNAME_NOT_BLANK)
+public class LessonResponse {
+    Integer id;
     String name;
-    String description;
-    Timestamp startedDate;
+    Timestamp createAt;
 }

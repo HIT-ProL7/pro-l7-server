@@ -1,7 +1,7 @@
 package com.example.hitproduct.domain.entity;
 /*
  * @author HongAnh
- * @created 21 / 06 / 2024 - 11:09 AM
+ * @created 10 / 07 / 2024 - 7:51 AM
  * @project pro-l7-server
  * @social Github: https://github.com/lehonganh0201
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
@@ -14,7 +14,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,19 +21,13 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-@Table(name = "classrooms")
+@Table(name = "lessons")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Classroom {
+public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
-
-    @Column(nullable = false)
     String name;
-
-    String description;
-
-    String roadmap;
 
     @CreationTimestamp
     Timestamp createAt;
@@ -42,14 +35,7 @@ public class Classroom {
     @UpdateTimestamp
     Timestamp updatedAt;
 
-    Timestamp startedDate;
-
-    @Column(nullable = false)
-    boolean closed;
-
-    @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Position> positions;
-
-    @OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL)
-    List<Lesson> lessons;
+    @ManyToOne
+    @JoinColumn(name = "classroom_id", nullable = false)
+    Classroom classroom;
 }
