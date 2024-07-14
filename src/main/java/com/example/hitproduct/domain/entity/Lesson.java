@@ -45,8 +45,11 @@ public class Lesson {
     @OneToMany(mappedBy = "lesson")
     List<LessonVideo> videos;
 
-    public void addLessonVideo(LessonVideo video){
-        if(videos == null){
+    @OneToMany(mappedBy = "lesson")
+    List<Exercise> exercises;
+
+    public void addLessonVideo(LessonVideo video) {
+        if (videos == null) {
             videos = new ArrayList<>();
         }
         videos.add(video);
