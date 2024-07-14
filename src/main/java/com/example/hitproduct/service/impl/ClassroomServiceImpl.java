@@ -37,7 +37,6 @@ import com.example.hitproduct.util.MessageSourceUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -189,7 +188,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
         if (!canModifyResource) {
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         Optional<User> newUserOpt = userRepository.findByStudentCode(request.getStudentCode());
@@ -264,7 +263,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
         if (!canModifyResource) {
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         Position position = positionRepository.findByUserIdAndClassroomId(userId, classId)
@@ -289,7 +288,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
         if (!canModifyResource) {
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         Position position = positionRepository.findByUserIdAndClassroomId(userId, classId)

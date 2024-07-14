@@ -18,6 +18,7 @@ import com.example.hitproduct.domain.entity.Classroom;
 import com.example.hitproduct.domain.entity.Lesson;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.LessonMapper;
+import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.repository.LessonRepository;
@@ -27,7 +28,6 @@ import com.example.hitproduct.service.LessonService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class LessonServiceImpl implements LessonService {
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
         if(!canModifyResource){
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         Lesson lesson = lessonMapper.toLesson(request);
