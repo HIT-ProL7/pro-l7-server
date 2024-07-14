@@ -19,6 +19,7 @@ import com.example.hitproduct.domain.entity.Lesson;
 import com.example.hitproduct.domain.entity.LessonVideo;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.VideoMapper;
+import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.LessonRepository;
 import com.example.hitproduct.repository.LessonVideoRepository;
@@ -27,7 +28,6 @@ import com.example.hitproduct.service.LessonVideoService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -50,7 +50,7 @@ public class LessonVideoServiceImpl implements LessonVideoService {
 
         boolean canModifyResource = isAdminOrLeader(currentUser, lesson.getClassroom());
         if(!canModifyResource){
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         LessonVideo video = videoMapper.toLessonVideo(request);
@@ -75,7 +75,7 @@ public class LessonVideoServiceImpl implements LessonVideoService {
 
         boolean canModifyResource = isAdminOrLeader(currentUser, lesson.getClassroom());
         if (!canModifyResource) {
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         LessonVideo video = videoRepository.findById(id).get();
@@ -100,7 +100,7 @@ public class LessonVideoServiceImpl implements LessonVideoService {
 
         boolean canModifyResource = isAdminOrLeader(currentUser, lesson.getClassroom());
         if (!canModifyResource) {
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         if (videoRepository.existsByLesson(lesson)){
