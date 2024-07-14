@@ -25,4 +25,6 @@ public interface LessonService {
     GlobalResponse<Meta, LessonResponse> getLesson(Integer id);
 
     GlobalResponse<Meta, LessonResponse> updateLesson(Integer id, UpdateLessonRequest request, User currentUser);
+
+    GlobalResponse<Meta, Void> deleteLesson(Integer id, User currentUser);
 }
