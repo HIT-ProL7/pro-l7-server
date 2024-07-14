@@ -30,6 +30,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
@@ -56,6 +59,9 @@ public class LessonVideoServiceImpl implements LessonVideoService {
         LessonVideo video = videoMapper.toLessonVideo(request);
         video.setLesson(lesson);
 
+        String src = extractSrcFromHtml(request.getUrl());
+        video.setUrl(src);
+
         video = videoRepository.save(video);
 
         return GlobalResponse
@@ -81,6 +87,10 @@ public class LessonVideoServiceImpl implements LessonVideoService {
         LessonVideo video = videoRepository.findById(id).get();
 
         videoMapper.updateLessonVideoFromDto(request, video);
+
+        String src = extractSrcFromHtml(request.getUrl());
+        video.setUrl(src);
+
         video = videoRepository.save(video);
 
         return GlobalResponse
@@ -132,5 +142,17 @@ public class LessonVideoServiceImpl implements LessonVideoService {
             return false;
         }
         return true;
+    }
+
+    private String extractSrcFromHtml(String htmlString){
+        String regex = "src=\'([^\']*)\'";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(htmlString);
+        if (matcher.find()) {
+            String src = matcher.group(1);
+            return src;
+        } else {
+            return htmlString;
+        }
     }
 }
