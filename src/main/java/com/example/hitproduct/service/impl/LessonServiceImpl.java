@@ -38,10 +38,10 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
-    LessonRepository lessonRepository;
+    LessonRepository      lessonRepository;
     LessonVideoRepository videoRepository;
-    UserRepository userRepository;
-    ClassroomRepository classroomRepository;
+    UserRepository        userRepository;
+    ClassroomRepository   classroomRepository;
 
     LessonMapper lessonMapper;
 
@@ -54,7 +54,7 @@ public class LessonServiceImpl implements LessonService {
                                                  .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
-        if(!canModifyResource){
+        if (!canModifyResource) {
             throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
@@ -62,8 +62,10 @@ public class LessonServiceImpl implements LessonService {
         lesson.setClassroom(classroom);
 
         lesson = lessonRepository.save(lesson);
-        lesson.addLessonVideo(request.getVideo());
-        videoRepository.save(request.getVideo());
+        if (request.getVideo() != null) {
+            lesson.addLessonVideo(request.getVideo());
+            videoRepository.save(request.getVideo());
+        }
 
         return GlobalResponse
                 .<Meta, LessonResponse>builder()
@@ -117,6 +119,23 @@ public class LessonServiceImpl implements LessonService {
                 .<Meta, LessonResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(lessonMapper.toLessonResponse(savedLesson))
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, Void> deleteLesson(Integer id, User currentUser) {
+        Lesson foundLesson = lessonRepository.findById(id)
+                                             .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
+
+        if (!isAdminOrLeader(currentUser, foundLesson.getClassroom())) {
+            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+        }
+
+        lessonRepository.deleteById(id);
+
+        return GlobalResponse
+                .<Meta, Void>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
                 .build();
     }
 

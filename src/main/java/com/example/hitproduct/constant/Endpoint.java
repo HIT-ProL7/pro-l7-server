@@ -38,11 +38,12 @@ public interface Endpoint {
             String GET_LESSON_IN_CLASSROOM = PREFIX + "/classroom/{classroomId}";
             String LESSON_ID               = PREFIX + "/{lessonId}";
             String UPDATE                  = PREFIX + "/{lessonId}";
+            String DELETE                  = PREFIX + "/{lessonId}";
         }
 
-        interface LessonVideo{
-            String PREFIX = V1.PREFIX + "/videos";
-            String LESSON_VIDEO_ID = PREFIX + "/{videoId}";
+        interface LessonVideo {
+            String PREFIX              = V1.PREFIX + "/videos";
+            String LESSON_VIDEO_ID     = PREFIX + "/{videoId}";
             String DELETE_LESSON_VIDEO = LESSON_VIDEO_ID + "/{lessonId}";
         }
     }

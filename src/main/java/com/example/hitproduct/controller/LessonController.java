@@ -94,4 +94,11 @@ public class LessonController {
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(lessonService.updateLesson(lessonId, request, currentUser));
     }
+
+    @DeleteMapping(Endpoint.V1.Lesson.DELETE)
+    public ResponseEntity<GlobalResponse<Meta, Void>> deleteLesson(
+            @PathVariable Integer lessonId, @AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(lessonService.deleteLesson(lessonId, currentUser));
+    }
 }
