@@ -8,6 +8,7 @@ package com.example.hitproduct.domain.dto.request;
  */
 
 import com.example.hitproduct.constant.ValidationMessage;
+import com.example.hitproduct.domain.entity.LessonVideo;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +21,9 @@ import lombok.experimental.FieldDefaults;
 public class CreateLessonRequest {
     @NotEmpty(message = ValidationMessage.Lesson.LESSON_NAME_NO_EMPTY)
     String name;
+    
     String content;
+    LessonVideo video;
 
     @NotEmpty(message = ValidationMessage.Lesson.CLASSROOM_ID_NOT_EMPTY)
     Integer classroomId;

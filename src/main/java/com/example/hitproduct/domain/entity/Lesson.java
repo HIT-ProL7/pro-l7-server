@@ -14,6 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -43,4 +44,12 @@ public class Lesson {
 
     @OneToMany(mappedBy = "lesson")
     List<LessonVideo> videos;
+
+    public void addLessonVideo(LessonVideo video){
+        if(videos == null){
+            videos = new ArrayList<>();
+        }
+        videos.add(video);
+        video.setLesson(this);
+    }
 }

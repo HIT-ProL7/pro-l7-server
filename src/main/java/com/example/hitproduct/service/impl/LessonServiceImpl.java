@@ -23,16 +23,14 @@ import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.repository.LessonRepository;
+import com.example.hitproduct.repository.LessonVideoRepository;
 import com.example.hitproduct.repository.UserRepository;
-import com.example.hitproduct.service.CloudinaryService;
 import com.example.hitproduct.service.LessonService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,8 +38,9 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
-    LessonRepository    lessonRepository;
-    UserRepository      userRepository;
+    LessonRepository lessonRepository;
+    LessonVideoRepository videoRepository;
+    UserRepository userRepository;
     ClassroomRepository classroomRepository;
 
     LessonMapper lessonMapper;
@@ -55,14 +54,16 @@ public class LessonServiceImpl implements LessonService {
                                                  .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
-        if (!canModifyResource) {
-            throw new AuthorizationServiceException(ErrorMessage.User.UNAUTHORIZED);
+        if(!canModifyResource){
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
 
         Lesson lesson = lessonMapper.toLesson(request);
         lesson.setClassroom(classroom);
 
         lesson = lessonRepository.save(lesson);
+        lesson.addLessonVideo(request.getVideo());
+        videoRepository.save(request.getVideo());
 
         return GlobalResponse
                 .<Meta, LessonResponse>builder()
