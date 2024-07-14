@@ -56,12 +56,12 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
         }
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(message != null ? HttpServletResponse.SC_UNAUTHORIZED : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         GlobalResponse<Meta, Void> responseBody = GlobalResponse.<Meta, Void>builder()
                                                                 .meta(Meta.builder()
                                                                           .status(Status.ERROR)
-                                                                          .message(messageSourceUtil.getLocalizedMessage(message))
+                                                                          .message(message)
                                                                           .build()
                                                                 )
                                                                 .build();
