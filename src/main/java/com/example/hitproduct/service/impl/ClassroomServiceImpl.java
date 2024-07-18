@@ -66,7 +66,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             throw new AlreadyExistsException(ErrorMessage.Classroom.ERR_EXISTS_CLASSNAME);
         }
         Classroom classroom = classroomMapper.toClassroom(request);
-        classroom.setClosed(false);
+        classroom.setClosed(CommonConstant.Classroom.IS_OPEN);
 
         classroom = classroomRepository.save(classroom);
 
@@ -163,7 +163,9 @@ public class ClassroomServiceImpl implements ClassroomService {
                         .description(classroom.getDescription())
                         .roadmap(classroom.getRoadmap())
                         .createAt(classroom.getCreateAt())
-                        .members(classroom.getPositions().parallelStream().map(Position::getUser).toList())
+                        .members(classroom.getPositions().stream()
+                                          .filter(position -> position.getSeatRole().equals(SeatRole.MEMBER)).map(Position::getUser)
+                                          .map(user -> userMapper.toUserResponse(user)).toList())
                         .build()
                 )
                 .build();
@@ -239,7 +241,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public GlobalResponse<Meta, List<GetClassroomResponse>> getClassrooms() {
         List<GetClassroomResponse> responses = new ArrayList<>();
-        List<Classroom> classrooms = classroomRepository.findAllByClosed(CommonConstant.Classroom.IS_CLOSE);
+        List<Classroom> classrooms = classroomRepository.findAllByClosed(CommonConstant.Classroom.IS_OPEN);
         for (Classroom classroom : classrooms) {
             GetClassroomResponse classroomResponse = getClassroomResponse(classroom);
             responses.add(classroomResponse);
@@ -351,9 +353,9 @@ public class ClassroomServiceImpl implements ClassroomService {
     private GetClassroomResponse getClassroomResponse(Classroom classroom) {
         GetClassroomResponse classroomResponse = classroomMapper.toGetClassroomResponse(classroom);
 
-        List<Position> positions = positionRepository.findAllByClassroom(classroom);
+//        List<Position> positions = positionRepository.findAllByClassroom(classroom);
 
-        List<UserResponse> userResponses = positions.stream()
+        List<UserResponse> userResponses = classroom.getPositions().stream()
                                                     .filter(position -> position.getSeatRole().equals(SeatRole.LEADER))
                                                     .map(position -> position.getUser().getId())
                                                     .map(userRepository::findById)
@@ -362,6 +364,11 @@ public class ClassroomServiceImpl implements ClassroomService {
                                                     .map(userMapper::toUserResponse)
                                                     .collect(Collectors.toList());
 
+        List<UserResponse> members = classroom.getPositions().stream()
+                                              .filter(position -> position.getSeatRole().equals(SeatRole.MEMBER)).map(Position::getUser)
+                                              .map(user -> userMapper.toUserResponse(user)).toList();
+
+        classroomResponse.setMembers(members);
         classroomResponse.setLeaders(userResponses);
         return classroomResponse;
     }
