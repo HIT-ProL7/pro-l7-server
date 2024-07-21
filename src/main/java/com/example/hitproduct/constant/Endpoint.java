@@ -50,6 +50,7 @@ public interface Endpoint {
         interface Exercise {
             String PREFIX = V1.PREFIX + "/exercises";
             String CREATE = V1.PREFIX + "/lessons/{lessonId}/exercises";
+            String UPDATE = V1.PREFIX + "/lessons/{lessonId}/exercises/{exerciseId}";
         }
     }
 }

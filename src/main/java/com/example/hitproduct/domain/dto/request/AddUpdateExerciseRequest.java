@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @Setter
-public class AddExerciseRequest {
+public class AddUpdateExerciseRequest {
     private String title;
     private String content;
 }
