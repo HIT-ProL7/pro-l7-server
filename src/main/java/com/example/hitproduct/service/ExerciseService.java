@@ -12,4 +12,6 @@ public interface ExerciseService {
     GlobalResponse<Meta, ExerciseResponse> updateExercise(
             Integer lessonId, Integer exerciseId, AddUpdateExerciseRequest request, User currentUser
     );
+
+    GlobalResponse<Meta, Void> deleteExercise(Integer lessonId, Integer exerciseId, User currentUser);
 }
