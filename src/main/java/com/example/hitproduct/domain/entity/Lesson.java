@@ -30,6 +30,9 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     String name;
+    String title;
+
+    @Lob
     String content;
 
     @CreationTimestamp
