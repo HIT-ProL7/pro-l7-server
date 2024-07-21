@@ -75,6 +75,26 @@ public class ExerciseServiceImpl implements ExerciseService {
                 .build();
     }
 
+    @Override
+    public GlobalResponse<Meta, Void> deleteExercise(Integer lessonId, Integer exerciseId, User currentUser) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                                        .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
+
+        if (!isAdminOrLeader(currentUser, lesson.getClassroom())) {
+            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+        }
+        Optional<Exercise> foundExercise = lesson.getExercises().stream().filter(exercise -> exercise.getId().equals(exerciseId)).findFirst();
+        if (foundExercise.isEmpty()) {
+            throw new NotFoundException(ErrorMessage.Exercise.ERR_EXERCISE_NOT_FOUND);
+        }
+        exerciseRepository.deleteById(exerciseId);
+
+        return GlobalResponse
+                .<Meta, Void>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .build();
+    }
+
 
     private boolean isAdminOrLeader(User currentUser, Classroom classroom) {
         boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");

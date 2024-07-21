@@ -37,4 +37,13 @@ public class ExerciseController {
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(exerciseService.updateExercise(lessonId, exerciseId, request, currentUser));
     }
+
+    @DeleteMapping(Endpoint.V1.Exercise.DELETE)
+    public ResponseEntity<GlobalResponse<Meta, Void>> deleteExercise(
+            @PathVariable Integer lessonId,
+            @PathVariable Integer exerciseId,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(exerciseService.deleteExercise(lessonId, exerciseId, currentUser));
+    }
 }
