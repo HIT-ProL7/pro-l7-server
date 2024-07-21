@@ -75,6 +75,7 @@ public class ExerciseServiceImpl implements ExerciseService {
                 .build();
     }
 
+
     private boolean isAdminOrLeader(User currentUser, Classroom classroom) {
         boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
         boolean isLeader = classroom.getPositions().stream()

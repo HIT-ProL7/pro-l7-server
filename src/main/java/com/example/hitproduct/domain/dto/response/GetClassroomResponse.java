@@ -21,12 +21,12 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class GetClassroomResponse {
-    Integer               id;
+    Integer            id;
     String             name;
     String             description;
     String             roadmap;
     Timestamp          createAt;
     Timestamp          startedDate;
     List<UserResponse> leaders;
-    List<User>         members;
+    List<UserResponse> members;
 }

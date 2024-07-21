@@ -12,5 +12,6 @@ public interface ExerciseMapper {
 
     Exercise toExercise(AddUpdateExerciseRequest request);
 
+
     ExerciseResponse toExerciseResponse(Exercise exercise);
 }
