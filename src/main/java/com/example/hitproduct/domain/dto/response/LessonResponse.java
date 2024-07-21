@@ -22,6 +22,7 @@ import java.util.List;
 public class LessonResponse {
     Integer id;
     String name;
+    String title;
     String content;
     Timestamp createAt;
     List<LessonVideo> videos;
