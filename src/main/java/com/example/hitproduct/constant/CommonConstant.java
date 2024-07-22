@@ -8,8 +8,14 @@ package com.example.hitproduct.constant;
  */
 
 public interface CommonConstant {
+
     interface Classroom{
         boolean IS_OPEN = true;
         boolean IS_CLOSE = false;
+    }
+
+    interface Submission {
+        Boolean CAN_EDIT = true;
+        Boolean CANNOT_EDIT = false;
     }
 }

@@ -10,9 +10,10 @@ package com.example.hitproduct.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Timestamp;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,32 +21,25 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-@Table(name = "comments")
+@Table(name = "submissions")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Comment {
+public class Submission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     String content;
 
+    @CreationTimestamp
+    Timestamp createAt;
+
+    @UpdateTimestamp
+    Timestamp updatedAt;
+
     @ManyToOne
+    @JoinColumn(name = "user_id")
     User user;
 
     @ManyToOne
+    @JoinColumn(name = "exercise_id")
     Exercise exercise;
-
-    @ManyToOne
-    Comment parentComment;
-
-    @OneToMany(mappedBy = "parentComment")
-    List<Comment> replies = new ArrayList<>();
-
-    public void addComment(Comment comment){
-        if(replies == null){
-            replies = new ArrayList<>();
-        }
-
-        replies.add(comment);
-        comment.setParentComment(this);
-    }
 }
