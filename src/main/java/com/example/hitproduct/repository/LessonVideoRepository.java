@@ -15,4 +15,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LessonVideoRepository extends JpaRepository<LessonVideo, Integer> {
     boolean existsByLesson(Lesson lesson);
+    void deleteAllByLesson(Lesson lesson);
 }
