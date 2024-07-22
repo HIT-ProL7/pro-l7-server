@@ -53,5 +53,9 @@ public interface Endpoint {
             String UPDATE = V1.PREFIX + "/lessons/{lessonId}/exercises/{exerciseId}";
             String DELETE = V1.PREFIX + "/lessons/{lessonId}/exercises/{exerciseId}";
         }
+
+        interface Submission {
+            String PREFIX = V1.PREFIX + "/submission";
+        }
     }
 }
