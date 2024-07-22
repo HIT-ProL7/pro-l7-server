@@ -30,6 +30,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -122,6 +123,7 @@ public class LessonServiceImpl implements LessonService {
                 .build();
     }
 
+    @Transactional
     @Override
     public GlobalResponse<Meta, Void> deleteLesson(Integer id, User currentUser) {
         Lesson foundLesson = lessonRepository.findById(id)
@@ -131,6 +133,7 @@ public class LessonServiceImpl implements LessonService {
             throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
         }
 
+        videoRepository.deleteAllByLesson(foundLesson);
         lessonRepository.deleteById(id);
 
         return GlobalResponse
