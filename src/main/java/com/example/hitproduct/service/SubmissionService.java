@@ -12,6 +12,10 @@ import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.SubmissionRequest;
 import com.example.hitproduct.domain.dto.response.SubmissionResponse;
 
+import java.util.List;
+
 public interface SubmissionService {
     GlobalResponse<Meta, SubmissionResponse> createSubmission(SubmissionRequest request, String studentCode);
+
+    GlobalResponse<Meta, List<SubmissionResponse>> getSubmissions(Integer id, String username);
 }

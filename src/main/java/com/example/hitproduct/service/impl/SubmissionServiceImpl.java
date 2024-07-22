@@ -20,6 +20,7 @@ import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.SubmissionMapper;
 import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.ForbiddenException;
+import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ExerciseRepository;
 import com.example.hitproduct.repository.SubmissionRepository;
 import com.example.hitproduct.repository.UserRepository;
@@ -29,6 +30,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -61,6 +66,36 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .<Meta, SubmissionResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(response)
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, List<SubmissionResponse>> getSubmissions(Integer id, String username) {
+        Exercise exercise = exerciseRepository.findById(id)
+                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.Exercise.ERR_EXERCISE_NOT_FOUND));
+
+        User currentUser = userRepository.findByStudentCode(username)
+                                         .orElseThrow(() -> new ForbiddenException(ErrorMessage.Auth.ERR_NOT_LOGIN));
+
+        List<Submission> submissions = submissionRepository.findAllByExercise(exercise);
+        List<SubmissionResponse> responses = new ArrayList<>();
+        for(Submission submission : submissions) {
+            if (currentUser.getUsername().equals(submission.getUser().getUsername())) {
+                SubmissionResponse response = submissionMapper.toSubmissionResponse(submission);
+                response.setEditable(CommonConstant.Submission.CAN_EDIT);
+                responses.add(response);
+            }
+            else{
+                SubmissionResponse response = submissionMapper.toSubmissionResponse(submission);
+                response.setEditable(CommonConstant.Submission.CANNOT_EDIT);
+                responses.add(response);
+            }
+        }
+
+        return GlobalResponse
+                .<Meta, List<SubmissionResponse>>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(responses)
                 .build();
     }
 }
