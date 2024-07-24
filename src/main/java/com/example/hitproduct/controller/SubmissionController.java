@@ -48,4 +48,13 @@ public class SubmissionController {
                 .status(HttpStatus.OK)
                 .body(submissionService.getSubmissions(id, userDetails.getUsername()));
     }
+
+    @PutMapping(Endpoint.V1.Submission.UPDATE_SUBMIT)
+    public ResponseEntity<GlobalResponse<Meta, SubmissionResponse>> updateSubmit(@PathVariable(name = "submitId") Integer id,
+                                                                                 @RequestParam(name = "content") String content,
+                                                                                 @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(submissionService.updateSubmission(id, content, userDetails.getUsername()));
+    }
 }

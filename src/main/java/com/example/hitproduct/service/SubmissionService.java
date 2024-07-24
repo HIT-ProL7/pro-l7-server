@@ -18,4 +18,6 @@ public interface SubmissionService {
     GlobalResponse<Meta, SubmissionResponse> createSubmission(SubmissionRequest request, String studentCode);
 
     GlobalResponse<Meta, List<SubmissionResponse>> getSubmissions(Integer id, String username);
+
+    GlobalResponse<Meta, SubmissionResponse> updateSubmission(Integer id, String content, String username);
 }

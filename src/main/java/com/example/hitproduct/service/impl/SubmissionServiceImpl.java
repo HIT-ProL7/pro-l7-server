@@ -83,11 +83,13 @@ public class SubmissionServiceImpl implements SubmissionService {
             if (currentUser.getUsername().equals(submission.getUser().getUsername())) {
                 SubmissionResponse response = submissionMapper.toSubmissionResponse(submission);
                 response.setEditable(CommonConstant.Submission.CAN_EDIT);
+                response.setCreatedBy(userMapper.toUserResponse(submission.getUser()));
                 responses.add(response);
             }
             else{
                 SubmissionResponse response = submissionMapper.toSubmissionResponse(submission);
                 response.setEditable(CommonConstant.Submission.CANNOT_EDIT);
+                response.setCreatedBy(userMapper.toUserResponse(submission.getUser()));
                 responses.add(response);
             }
         }
@@ -96,6 +98,26 @@ public class SubmissionServiceImpl implements SubmissionService {
                 .<Meta, List<SubmissionResponse>>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(responses)
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, SubmissionResponse> updateSubmission(Integer id, String content, String username) {
+        Submission submission = submissionRepository.findById(id)
+                                                    .orElseThrow(() -> new NotFoundException(ErrorMessage.Submission.ERR_SUBMIT_NOT_FOUND));
+
+        if (!username.equals(submission.getUser().getUsername())) {
+            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
+        }
+
+        submission.setContent(content);
+
+        submissionRepository.save(submission);
+
+        return GlobalResponse
+                .<Meta, SubmissionResponse>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data(submissionMapper.toSubmissionResponse(submission))
                 .build();
     }
 }
