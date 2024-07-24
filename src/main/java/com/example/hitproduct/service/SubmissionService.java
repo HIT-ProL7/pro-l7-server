@@ -19,5 +19,7 @@ public interface SubmissionService {
 
     GlobalResponse<Meta, List<SubmissionResponse>> getSubmissions(Integer id, String username);
 
-    GlobalResponse<Meta, SubmissionResponse> updateSubmission(Integer id, String content, String username);
+    GlobalResponse<Meta, Object> updateSubmission(Integer id, String content, String username);
+
+    GlobalResponse<Meta, String> deleteSubmission(Integer id, String username);
 }

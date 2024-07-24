@@ -50,11 +50,19 @@ public class SubmissionController {
     }
 
     @PutMapping(Endpoint.V1.Submission.UPDATE_SUBMIT)
-    public ResponseEntity<GlobalResponse<Meta, SubmissionResponse>> updateSubmit(@PathVariable(name = "submitId") Integer id,
-                                                                                 @RequestParam(name = "content") String content,
-                                                                                 @AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<GlobalResponse<Meta, Object>> updateSubmit(@PathVariable(name = "submitId") Integer id,
+                                                                     @RequestParam(name = "content") String content,
+                                                                     @AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(submissionService.updateSubmission(id, content, userDetails.getUsername()));
+    }
+
+    @DeleteMapping(Endpoint.V1.Submission.DELETE_SUBMIT)
+    public ResponseEntity<GlobalResponse<Meta, String>> deleteSubmit(@PathVariable(name = "submitId") Integer id,
+                                                                     @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(submissionService.deleteSubmission(id, userDetails.getUsername()));
     }
 }

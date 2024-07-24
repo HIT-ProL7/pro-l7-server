@@ -102,12 +102,16 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public GlobalResponse<Meta, SubmissionResponse> updateSubmission(Integer id, String content, String username) {
+    public GlobalResponse<Meta, Object> updateSubmission(Integer id, String content, String username) {
         Submission submission = submissionRepository.findById(id)
                                                     .orElseThrow(() -> new NotFoundException(ErrorMessage.Submission.ERR_SUBMIT_NOT_FOUND));
 
         if (!username.equals(submission.getUser().getUsername())) {
-            throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
+            return GlobalResponse
+                    .<Meta, Object>builder()
+                    .meta(Meta.builder().status(Status.ERROR).build())
+                    .data("Update submission fail")
+                    .build();
         }
 
         submission.setContent(content);
@@ -115,9 +119,31 @@ public class SubmissionServiceImpl implements SubmissionService {
         submissionRepository.save(submission);
 
         return GlobalResponse
-                .<Meta, SubmissionResponse>builder()
+                .<Meta, Object>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(submissionMapper.toSubmissionResponse(submission))
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, String> deleteSubmission(Integer id, String username) {
+        Submission submission = submissionRepository.findById(id)
+                                                    .orElseThrow(() -> new NotFoundException(ErrorMessage.Submission.ERR_SUBMIT_NOT_FOUND));
+
+        if (!username.equals(submission.getUser().getUsername())) {
+            return GlobalResponse
+                    .<Meta, String>builder()
+                    .meta(Meta.builder().status(Status.ERROR).build())
+                    .data("Delete submission fail")
+                    .build();
+        }
+
+        submissionRepository.delete(submission);
+
+        return GlobalResponse
+                .<Meta, String>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data("Delete submission success")
                 .build();
     }
 }
