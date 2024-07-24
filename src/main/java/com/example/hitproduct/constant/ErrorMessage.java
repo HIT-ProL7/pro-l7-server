@@ -45,4 +45,8 @@ public interface ErrorMessage {
     interface Exercise {
         String ERR_EXERCISE_NOT_FOUND = "exception.exercise.not-found";
     }
+
+    interface Submission {
+        String ERR_SUBMIT_NOT_FOUND = "exception.submit.not-found";
+    }
 }

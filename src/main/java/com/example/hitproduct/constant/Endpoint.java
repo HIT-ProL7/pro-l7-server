@@ -55,8 +55,9 @@ public interface Endpoint {
         }
 
         interface Submission {
-            String PREFIX     = V1.PREFIX + "/submission";
+            String    PREFIX     = V1.PREFIX + "/submission";
             String    GET_SUBMIT = PREFIX + "/{exerciseId}";
+            String    UPDATE_SUBMIT = PREFIX +"/{submitId}";
         }
     }
 }
