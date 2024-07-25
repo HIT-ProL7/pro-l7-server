@@ -26,4 +26,5 @@ public class LessonResponse {
     String content;
     Timestamp createAt;
     List<LessonVideo> videos;
+    List<ExerciseResponse> exercises;
 }
