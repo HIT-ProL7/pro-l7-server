@@ -32,6 +32,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,7 @@ public class LessonServiceImpl implements LessonService {
                                                  .orElseThrow(() -> new NotFoundException(ErrorMessage.Classroom.ERR_NOTFOUND_BY_ID));
 
         boolean canModifyResource = isAdminOrLeader(currentUser, classroom);
+
         if (!canModifyResource) {
             throw new ForbiddenException(ErrorMessage.User.UNAUTHORIZED);
         }
@@ -77,14 +79,16 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public GlobalResponse<Meta, List<LessonResponse>> getLessons(Integer id) {
-        List<LessonResponse> list = lessonRepository.findAllByClassroomId(id).stream()
-                                                    .map(lesson -> lessonMapper.toLessonResponse(lesson))
-                                                    .collect(Collectors.toList());
+        List<Lesson> list = lessonRepository.findAllByClassroomId(id).stream().toList();
+        List<LessonResponse> responses = new ArrayList<>();
+        for(var lesson : list){
+            responses.add(lessonMapper.toLessonResponse(lesson));
+        }
 
         return GlobalResponse
                 .<Meta, List<LessonResponse>>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
-                .data(list)
+                .data(responses)
                 .build();
     }
 
@@ -114,6 +118,10 @@ public class LessonServiceImpl implements LessonService {
         if (request.name() != null) {
             foundLesson.setName(request.name());
         }
+        if(request.content() != null){
+            foundLesson.setContent(request.content());
+        }
+
         Lesson savedLesson = lessonRepository.save(foundLesson);
 
         return GlobalResponse
