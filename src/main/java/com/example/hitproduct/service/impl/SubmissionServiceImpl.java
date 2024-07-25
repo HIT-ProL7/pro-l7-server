@@ -13,6 +13,7 @@ import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.domain.dto.request.SubmissionRequest;
+import com.example.hitproduct.domain.dto.request.UpdateSubmissionRequest;
 import com.example.hitproduct.domain.dto.response.SubmissionResponse;
 import com.example.hitproduct.domain.entity.Exercise;
 import com.example.hitproduct.domain.entity.Submission;
@@ -102,7 +103,7 @@ public class SubmissionServiceImpl implements SubmissionService {
     }
 
     @Override
-    public GlobalResponse<Meta, Object> updateSubmission(Integer id, String content, String username) {
+    public GlobalResponse<Meta, Object> updateSubmission(Integer id, UpdateSubmissionRequest request, String username) {
         Submission submission = submissionRepository.findById(id)
                                                     .orElseThrow(() -> new NotFoundException(ErrorMessage.Submission.ERR_SUBMIT_NOT_FOUND));
 
@@ -114,7 +115,7 @@ public class SubmissionServiceImpl implements SubmissionService {
                     .build();
         }
 
-        submission.setContent(content);
+        submission.setContent(request.getContent());
 
         submissionRepository.save(submission);
 

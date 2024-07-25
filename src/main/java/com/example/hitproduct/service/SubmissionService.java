@@ -10,6 +10,7 @@ package com.example.hitproduct.service;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.SubmissionRequest;
+import com.example.hitproduct.domain.dto.request.UpdateSubmissionRequest;
 import com.example.hitproduct.domain.dto.response.SubmissionResponse;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface SubmissionService {
 
     GlobalResponse<Meta, List<SubmissionResponse>> getSubmissions(Integer id, String username);
 
-    GlobalResponse<Meta, Object> updateSubmission(Integer id, String content, String username);
+    GlobalResponse<Meta, Object> updateSubmission(Integer id, UpdateSubmissionRequest request, String username);
 
     GlobalResponse<Meta, String> deleteSubmission(Integer id, String username);
 }

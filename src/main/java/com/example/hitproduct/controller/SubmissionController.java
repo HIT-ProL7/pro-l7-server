@@ -11,6 +11,7 @@ import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.request.SubmissionRequest;
+import com.example.hitproduct.domain.dto.request.UpdateSubmissionRequest;
 import com.example.hitproduct.domain.dto.response.SubmissionResponse;
 import com.example.hitproduct.service.SubmissionService;
 import lombok.AccessLevel;
@@ -51,11 +52,11 @@ public class SubmissionController {
 
     @PutMapping(Endpoint.V1.Submission.UPDATE_SUBMIT)
     public ResponseEntity<GlobalResponse<Meta, Object>> updateSubmit(@PathVariable(name = "submitId") Integer id,
-                                                                     @RequestParam(name = "content") String content,
+                                                                     @RequestBody UpdateSubmissionRequest request,
                                                                      @AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(submissionService.updateSubmission(id, content, userDetails.getUsername()));
+                .body(submissionService.updateSubmission(id, request, userDetails.getUsername()));
     }
 
     @DeleteMapping(Endpoint.V1.Submission.DELETE_SUBMIT)
