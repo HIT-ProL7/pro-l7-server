@@ -23,5 +23,5 @@ public interface AuthService {
 
     GlobalResponse<Meta, AuthResponse> login(LoginRequest loginRequest);
 
-    GlobalResponse<Meta, BlankData> forgotPassword(String studentCode);
+    GlobalResponse<Meta, UserResponse> forgotPassword(String studentCode);
 }
