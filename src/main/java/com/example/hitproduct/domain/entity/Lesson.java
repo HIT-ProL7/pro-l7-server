@@ -32,7 +32,7 @@ public class Lesson {
     String name;
     String title;
 
-    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     String content;
 
     @CreationTimestamp

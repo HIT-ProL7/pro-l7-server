@@ -74,8 +74,8 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Password reset instructions sent successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    @PatchMapping(Endpoint.V1.Auth.FORGOT_PASSWORD)
-    public ResponseEntity<GlobalResponse<Meta, BlankData>> forgotUserPassword(
+    @PutMapping(Endpoint.V1.Auth.FORGOT_PASSWORD)
+    public ResponseEntity<GlobalResponse<Meta, UserResponse>> forgotUserPassword(
             @PathVariable String studentCode
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.forgotPassword(studentCode));
