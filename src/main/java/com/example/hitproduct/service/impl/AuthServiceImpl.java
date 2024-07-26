@@ -111,18 +111,17 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public GlobalResponse<Meta, UserResponse> forgotPassword(String studentCode) {
         User user = userRepository.findByStudentCode(studentCode)
-                .orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+                                  .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         String newPassword = randomUtil.generatePassword();
         MailDTO mailDTO = MailDTO.builder()
                                  .to(user.getEmail())
                                  .subject("Đặt lại mật khẩu cho tài khoản của bạn")
-                                 .text("<h2>Xin chào "+ user.getUsername()+" ,</h2>\n" +
-                                       "    <p>Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.</p>\n" +
-                                       "    <p>Dưới đây là mật khẩu mới của bạn: </p>\n" +
-                                       "    <p><a href=\"\" target=\"_blank\">"+ newPassword +"</a></p>\n" +
-                                       "    <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận hỗ trợ của chúng tôi.</p>\n" +
-                                       "    <p>Trân trọng,<br>HIT ProL7</p>").build();
+                                 .text("Xin chào " + user.getFullName() + " ,\n" +
+                                       "Bạn nhận được email này vì chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.\n" +
+                                       "Dưới đây là mật khẩu mới của bạn: " + newPassword + "\n" +
+                                       "Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận hỗ trợ của chúng tôi.\n" +
+                                       "Trân trọng,\nHIT ProL7").build();
 
         mailer.send(mailDTO);
         user.setPassword(passwordEncoder.encode(newPassword));
