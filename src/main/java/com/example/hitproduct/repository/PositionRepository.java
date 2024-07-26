@@ -34,4 +34,6 @@ public interface PositionRepository extends JpaRepository<Position, Long> {
 
     @Query("SELECT p.classroom FROM Position p WHERE p.user.id = :userId AND p.classroom.closed = :isActive")
     List<Classroom> findActiveClassroomsByUserId(@Param("userId") String userId, @Param("isActive") boolean isActive);
+
+    boolean existsByClassroomAndUser(Classroom classroom, User user);
 }

@@ -27,6 +27,7 @@ import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.exception.AlreadyExistsException;
+import com.example.hitproduct.exception.AppException;
 import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ClassroomRepository;
@@ -199,6 +200,10 @@ public class ClassroomServiceImpl implements ClassroomService {
         }
 
         User newUser = newUserOpt.get();
+
+        if(positionRepository.existsByClassroomAndUser(classroom, newUser)) {
+            throw new AppException(ErrorMessage.Classroom.ERR_EXISTS_USER_IN_CLASS);
+        }
 
         Position position = null;
         if (request.getSeatRole() != null) {
