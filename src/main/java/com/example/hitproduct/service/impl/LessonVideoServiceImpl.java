@@ -88,8 +88,10 @@ public class LessonVideoServiceImpl implements LessonVideoService {
 
         videoMapper.updateLessonVideoFromDto(request, video);
 
-        String src = extractSrcFromHtml(request.getUrl());
-        video.setUrl(src);
+        if(request.getUrl() != null) {
+            String src = extractSrcFromHtml(request.getUrl());
+            video.setUrl(src);
+        }
 
         video = videoRepository.save(video);
 
