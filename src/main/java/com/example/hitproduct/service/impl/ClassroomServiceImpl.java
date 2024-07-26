@@ -94,7 +94,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
         }
 
-        foundClassroom.setClosed(true);
+        foundClassroom.setClosed(CommonConstant.Classroom.IS_CLOSE);
         classroomRepository.save(foundClassroom);
 
         return GlobalResponse
