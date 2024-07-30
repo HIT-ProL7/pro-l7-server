@@ -107,12 +107,17 @@ public class LessonServiceImpl implements LessonService {
     }
 
     @Override
-    public GlobalResponse<Meta, LessonResponse> updateLesson(Integer id, UpdateLessonRequest request, User currentUser) {
+    public GlobalResponse<Meta, LessonResponse> updateLesson(Integer id, UpdateLessonRequest request, User loginUser) {
+        User currentUser = userRepository.findByStudentCode(loginUser.getStudentCode()).orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         Lesson foundLesson = lessonRepository.findById(id)
                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
         if (!isAdminOrLeader(currentUser, foundLesson.getClassroom())) {
             throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+        }
+
+        if (request.title() != null) {
+            foundLesson.setTitle(request.title());
         }
 
         if (request.name() != null) {
@@ -133,7 +138,8 @@ public class LessonServiceImpl implements LessonService {
 
     @Transactional
     @Override
-    public GlobalResponse<Meta, Void> deleteLesson(Integer id, User currentUser) {
+    public GlobalResponse<Meta, Void> deleteLesson(Integer id, User loginUser) {
+        User currentUser = userRepository.findByStudentCode(loginUser.getStudentCode()).orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         Lesson foundLesson = lessonRepository.findById(id)
                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
@@ -156,6 +162,9 @@ public class LessonServiceImpl implements LessonService {
                                     .anyMatch(position -> position.getUser().equals(currentUser)
                                                           && position.getSeatRole().equals(SeatRole.LEADER));
 
-        return isAdmin || isLeader;
+        if (!isAdmin && !isLeader) {
+            return false;
+        }
+        return true;
     }
 }
