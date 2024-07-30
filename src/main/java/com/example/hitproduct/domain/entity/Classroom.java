@@ -14,6 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -32,6 +33,8 @@ public class Classroom {
     @Column(nullable = false)
     String name;
 
+    String logo;
+
     String description;
 
     String roadmap;
@@ -42,7 +45,7 @@ public class Classroom {
     @UpdateTimestamp
     Timestamp updatedAt;
 
-    Timestamp startedDate;
+    OffsetDateTime startedDate;
 
     @Column(nullable = false)
     boolean closed;

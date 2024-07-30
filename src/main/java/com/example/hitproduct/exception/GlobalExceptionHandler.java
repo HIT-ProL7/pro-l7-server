@@ -107,4 +107,19 @@ public class GlobalExceptionHandler {
                         .build()
                 );
     }
+
+    @ExceptionHandler(UploadFileException.class)
+    public ResponseEntity<GlobalResponse<Meta, BlankData>> handleUploadFileException(UploadFileException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(GlobalResponse
+                        .<Meta, BlankData>builder()
+                        .meta(Meta.builder()
+                                  .status(Status.ERROR)
+                                  .message(messageSourceUtil.getLocalizedMessage(ex.getMessage()))
+                                  .build()
+                        )
+                        .build()
+                );
+    }
 }

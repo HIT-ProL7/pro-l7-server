@@ -52,7 +52,7 @@ public class ClassroomController {
             }
     )
     @PostMapping(Endpoint.V1.Classroom.CREATE)
-    public ResponseEntity<GlobalResponse<Meta, CreateClassroomResponse>> createClassroom(@RequestBody @Valid CreateClassroomRequest request) {
+    public ResponseEntity<GlobalResponse<Meta, CreateClassroomResponse>> createClassroom(@ModelAttribute @Valid CreateClassroomRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(classroomService.createClass(request));
@@ -70,7 +70,7 @@ public class ClassroomController {
     public ResponseEntity<GlobalResponse<Meta, GetClassroomResponse>> editClassroom(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Integer classroomId,
-            @RequestBody EditClassroomRequest request
+            @ModelAttribute EditClassroomRequest request
     ) {
         return ResponseEntity
                 .status(HttpStatus.OK)

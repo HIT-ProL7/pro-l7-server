@@ -33,6 +33,7 @@ public interface ErrorMessage {
         String ERR_FORBIDDEN        = "exception.classroom.forbidden";
         String ERR_NOTFOUND_BY_ID       = "exception.classroom.not-found";
         String ERR_EXISTS_USER_IN_CLASS = "exception.classroom.user-exist";
+        String ERR_FILE_UPLOAD = "exception.classroom.file-format";
     }
 
     interface Lesson {

@@ -12,6 +12,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Getter
@@ -22,7 +23,9 @@ import java.util.List;
 public class CreateClassroomResponse {
     Integer id;
     String name;
+    String logo;
     String description;
-    Timestamp createAt;
-    Timestamp startedDate;
+    String roadmap;
+    Timestamp      createAt;
+    OffsetDateTime startedDate;
 }

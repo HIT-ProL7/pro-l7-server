@@ -11,8 +11,10 @@ import com.example.hitproduct.constant.ValidationMessage;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Timestamp;
+import java.time.OffsetDateTime;
 
 @Getter
 @Setter
@@ -22,6 +24,10 @@ import java.sql.Timestamp;
 public class CreateClassroomRequest {
     @NotEmpty(message = ValidationMessage.Classroom.CLASSNAME_NOT_BLANK)
     String name;
+    MultipartFile logoImg;
     String description;
-    Timestamp startedDate;
+    MultipartFile roadmapImg;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    OffsetDateTime startedDate;
 }

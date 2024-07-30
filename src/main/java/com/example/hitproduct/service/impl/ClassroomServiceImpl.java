@@ -26,14 +26,12 @@ import com.example.hitproduct.constant.SeatRole;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.ClassroomMapper;
 import com.example.hitproduct.domain.mapper.UserMapper;
-import com.example.hitproduct.exception.AlreadyExistsException;
-import com.example.hitproduct.exception.AppException;
-import com.example.hitproduct.exception.ForbiddenException;
-import com.example.hitproduct.exception.NotFoundException;
+import com.example.hitproduct.exception.*;
 import com.example.hitproduct.repository.ClassroomRepository;
 import com.example.hitproduct.repository.PositionRepository;
 import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.service.ClassroomService;
+import com.example.hitproduct.util.CloudinaryUtil;
 import com.example.hitproduct.util.MessageSourceUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +57,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     ClassroomMapper   classroomMapper;
     UserMapper        userMapper;
     MessageSourceUtil messageSourceUtil;
+    CloudinaryUtil cloudinaryUtil;
 
     @Override
     public GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request) {
@@ -68,6 +67,22 @@ public class ClassroomServiceImpl implements ClassroomService {
         }
         Classroom classroom = classroomMapper.toClassroom(request);
         classroom.setClosed(CommonConstant.Classroom.IS_OPEN);
+
+        if (!request.getLogoImg().isEmpty()) {
+            try {
+                classroom.setLogo(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
+            } catch (Exception e) {
+                throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
+            }
+        }
+
+        if (!request.getRoadmapImg().isEmpty()) {
+            try {
+                classroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
+            } catch (Exception e) {
+                throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
+            }
+        }
 
         classroom = classroomRepository.save(classroom);
 
@@ -123,7 +138,24 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         if (request.getName() != null) foundClassroom.setName(request.getName());
         if (request.getDescription() != null) foundClassroom.setDescription(request.getDescription());
-        if (request.getRoadmap() != null) foundClassroom.setRoadmap(request.getRoadmap());
+        if (request.getStartedDate() != null) foundClassroom.setStartedDate(request.getStartedDate());
+
+        if (!request.getLogoImg().isEmpty()) {
+            try {
+                foundClassroom.setLogo(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
+            } catch (Exception e) {
+                throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
+            }
+        }
+
+        if (!request.getRoadmapImg().isEmpty()) {
+            try {
+                foundClassroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
+            } catch (Exception e) {
+                throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
+            }
+        }
+
 
         Classroom updatedClassroom = classroomRepository.save(foundClassroom);
 
