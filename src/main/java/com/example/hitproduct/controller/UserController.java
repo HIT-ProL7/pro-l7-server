@@ -59,7 +59,7 @@ public class UserController {
     })
     @PutMapping(Endpoint.V1.User.UPDATE_INFO)
     public ResponseEntity<GlobalResponse<Meta, UserResponse>> updateInfo(
-            @RequestBody UpdateInfoRequest request,
+            @ModelAttribute UpdateInfoRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         return ResponseEntity
