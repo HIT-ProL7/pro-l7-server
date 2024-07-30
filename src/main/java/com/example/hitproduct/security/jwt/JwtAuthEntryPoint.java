@@ -61,7 +61,7 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
         GlobalResponse<Meta, Void> responseBody = GlobalResponse.<Meta, Void>builder()
                                                                 .meta(Meta.builder()
                                                                           .status(Status.ERROR)
-                                                                          .message(message)
+                                                                          .message(messageSourceUtil.getLocalizedMessage(message))
                                                                           .build()
                                                                 )
                                                                 .build();
