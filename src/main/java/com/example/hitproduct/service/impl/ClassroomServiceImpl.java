@@ -68,7 +68,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom classroom = classroomMapper.toClassroom(request);
         classroom.setClosed(CommonConstant.Classroom.IS_OPEN);
 
-        if (!request.getLogoImg().isEmpty()) {
+        if (request.getLogoImg() != null) {
             try {
                 classroom.setLogo(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
             } catch (Exception e) {
@@ -76,7 +76,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             }
         }
 
-        if (!request.getRoadmapImg().isEmpty()) {
+        if (request.getRoadmapImg() != null) {
             try {
                 classroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
             } catch (Exception e) {
@@ -140,7 +140,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (request.getDescription() != null) foundClassroom.setDescription(request.getDescription());
         if (request.getStartedDate() != null) foundClassroom.setStartedDate(request.getStartedDate());
 
-        if (!request.getLogoImg().isEmpty()) {
+        if (request.getLogoImg() != null) {
             try {
                 foundClassroom.setLogo(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
             } catch (Exception e) {
@@ -148,7 +148,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             }
         }
 
-        if (!request.getRoadmapImg().isEmpty()) {
+        if (request.getRoadmapImg() != null) {
             try {
                 foundClassroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
             } catch (Exception e) {
