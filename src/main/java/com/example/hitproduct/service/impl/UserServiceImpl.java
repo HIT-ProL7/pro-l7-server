@@ -68,18 +68,20 @@ public class UserServiceImpl implements UserService {
         if (request.facebookUrl() != null) user.setFacebookUrl(request.facebookUrl());
         if (request.avatar() != null) {
             try {
-                cloudinaryService.uploadImage(request.avatar().getBytes());
+                user.setAvatarUrl(cloudinaryService.uploadImage(request.avatar().getBytes()));
             } catch (Exception e) {
                 throw new InternalServerErrorException("Failed to upload avatar image.");
             }
         }
         if (request.banner() != null) {
             try {
-                cloudinaryService.uploadImage(request.banner().getBytes());
+                user.setBannerUrl(cloudinaryService.uploadImage(request.banner().getBytes()));
             } catch (Exception e) {
                 throw new InternalServerErrorException("Failed to upload banner image.");
             }
         }
+
+        user = userRepository.save(user);
 
         return GlobalResponse
                 .<Meta, UserResponse>builder()

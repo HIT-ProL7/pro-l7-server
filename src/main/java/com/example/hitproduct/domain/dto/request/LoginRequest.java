@@ -25,6 +25,6 @@ public class LoginRequest {
     String studentCode;
 
     @NotEmpty(message = "This field cannot empty")
-    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_+=<>?/{}~|-]).{8,}$", message = ValidationMessage.Login.PASSWORD_INVALID)
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_+=<>?/{}~|-]).{8,16}$", message = ValidationMessage.Login.PASSWORD_INVALID)
     String password;
 }

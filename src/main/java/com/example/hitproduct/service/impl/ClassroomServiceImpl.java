@@ -122,6 +122,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .build();
     }
 
+    @Transactional
     public GlobalResponse<Meta, GetClassroomResponse> editClassroom(User currentUser, Integer classroomId, EditClassroomRequest request) {
         Classroom foundClassroom = classroomRepository
                 .findById(classroomId)
