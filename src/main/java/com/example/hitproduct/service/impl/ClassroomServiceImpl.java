@@ -36,6 +36,7 @@ import com.example.hitproduct.util.MessageSourceUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Log4j2
 public class ClassroomServiceImpl implements ClassroomService {
 
     ClassroomRepository classroomRepository;
@@ -78,7 +80,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         if (request.getRoadmapImg() != null) {
             try {
-                classroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
+                classroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getRoadmapImg()));
             } catch (Exception e) {
                 throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
             }
@@ -151,7 +153,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         if (request.getRoadmapImg() != null) {
             try {
-                foundClassroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getLogoImg()));
+                foundClassroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getRoadmapImg()));
             } catch (Exception e) {
                 throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
             }
