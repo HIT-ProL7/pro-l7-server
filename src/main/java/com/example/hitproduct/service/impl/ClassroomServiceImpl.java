@@ -78,14 +78,6 @@ public class ClassroomServiceImpl implements ClassroomService {
             }
         }
 
-        if (request.getRoadmapImg() != null) {
-            try {
-                classroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getRoadmapImg()));
-            } catch (Exception e) {
-                throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
-            }
-        }
-
         classroom = classroomRepository.save(classroom);
 
         return GlobalResponse
@@ -142,6 +134,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         if (request.getName() != null) foundClassroom.setName(request.getName());
         if (request.getDescription() != null) foundClassroom.setDescription(request.getDescription());
         if (request.getStartedDate() != null) foundClassroom.setStartedDate(request.getStartedDate());
+        if (request.getRoadmap() != null) foundClassroom.setRoadmap(request.getRoadmap());
 
         if (request.getLogoImg() != null) {
             try {
@@ -150,15 +143,6 @@ public class ClassroomServiceImpl implements ClassroomService {
                 throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
             }
         }
-
-        if (request.getRoadmapImg() != null) {
-            try {
-                foundClassroom.setRoadmap(cloudinaryUtil.getUrlFromFile(request.getRoadmapImg()));
-            } catch (Exception e) {
-                throw new UploadFileException(ErrorMessage.Classroom.ERR_FILE_UPLOAD);
-            }
-        }
-
 
         Classroom updatedClassroom = classroomRepository.save(foundClassroom);
 

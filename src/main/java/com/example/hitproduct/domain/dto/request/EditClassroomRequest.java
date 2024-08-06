@@ -17,7 +17,7 @@ public class EditClassroomRequest {
     private String name;
     private MultipartFile logoImg;
     private String description;
-    private MultipartFile roadmapImg;
+    private String roadmap;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private OffsetDateTime startedDate;
