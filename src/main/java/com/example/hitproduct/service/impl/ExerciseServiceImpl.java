@@ -16,24 +16,29 @@ import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.repository.ExerciseRepository;
 import com.example.hitproduct.repository.LessonRepository;
+import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.service.ExerciseService;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class ExerciseServiceImpl implements ExerciseService {
     private final ExerciseRepository exerciseRepository;
     private final LessonRepository   lessonRepository;
+    private final UserRepository     userRepository;
 
     @Override
-    public GlobalResponse<Meta, ExerciseResponse> createExercise(Integer lessonId, AddUpdateExerciseRequest request, User currentUser) {
+    public GlobalResponse<Meta, ExerciseResponse> createExercise(Integer lessonId, AddUpdateExerciseRequest request, User user) {
         Lesson lesson = lessonRepository.findById(lessonId)
                                         .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
-        if (!isAdminOrLeader(currentUser, lesson.getClassroom())) {
+
+        if (!isAdminOrLeader(userRepository.findByStudentCode(user.getUsername()).get(), lesson.getClassroom())) {
             throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
         }
         Exercise mappedExercise = ExerciseMapper.INSTANCE.toExercise(request);
@@ -48,11 +53,12 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public GlobalResponse<Meta, ExerciseResponse> updateExercise(Integer lessonId, Integer exerciseId, AddUpdateExerciseRequest request, User currentUser) {
+    public GlobalResponse<Meta, ExerciseResponse> updateExercise(Integer lessonId, Integer exerciseId, AddUpdateExerciseRequest request, User user) {
         Lesson lesson = lessonRepository.findById(lessonId)
                                         .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
-        if (!isAdminOrLeader(currentUser, lesson.getClassroom())) {
+
+        if (!isAdminOrLeader(userRepository.findByStudentCode(user.getUsername()).get(), lesson.getClassroom())) {
             throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
         }
         Optional<Exercise> foundExercise = lesson.getExercises().stream().filter(exercise -> exercise.getId().equals(exerciseId)).findFirst();
@@ -76,11 +82,13 @@ public class ExerciseServiceImpl implements ExerciseService {
     }
 
     @Override
-    public GlobalResponse<Meta, Void> deleteExercise(Integer lessonId, Integer exerciseId, User currentUser) {
+    public GlobalResponse<Meta, Void> deleteExercise(Integer lessonId, Integer exerciseId, User user) {
         Lesson lesson = lessonRepository.findById(lessonId)
                                         .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
-        if (!isAdminOrLeader(currentUser, lesson.getClassroom())) {
+
+
+        if (!isAdminOrLeader(userRepository.findByStudentCode(user.getUsername()).get(), lesson.getClassroom())) {
             throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
         }
         Optional<Exercise> foundExercise = lesson.getExercises().stream().filter(exercise -> exercise.getId().equals(exerciseId)).findFirst();
@@ -98,10 +106,14 @@ public class ExerciseServiceImpl implements ExerciseService {
 
     private boolean isAdminOrLeader(User currentUser, Classroom classroom) {
         boolean isAdmin = currentUser.getRole().getName().contains("ADMIN");
+        log.warn(currentUser.getStudentCode());
         boolean isLeader = classroom.getPositions().stream()
                                     .anyMatch(position -> position.getUser().equals(currentUser)
                                                           && position.getSeatRole().equals(SeatRole.LEADER));
 
-        return isAdmin || isLeader;
+        if (!isAdmin && !isLeader) {
+            return false;
+        }
+        return true;
     }
 }
