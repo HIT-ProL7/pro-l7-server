@@ -11,10 +11,9 @@ import com.example.hitproduct.constant.Endpoint;
 import com.example.hitproduct.domain.dto.global.BlankData;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
-import com.example.hitproduct.domain.dto.request.AddUserRequest;
-import com.example.hitproduct.domain.dto.request.LoginRequest;
-import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
+import com.example.hitproduct.domain.dto.request.*;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
+import com.example.hitproduct.domain.dto.response.RefreshResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.mapper.UserMapper;
 import com.example.hitproduct.security.jwt.JwtUtils;
@@ -69,6 +68,13 @@ public class AuthController {
                 .body(authService.login(request));
     }
 
+    @PostMapping(Endpoint.V1.Auth.LOGOUT)
+    public ResponseEntity<GlobalResponse<Meta, String>> logout(@RequestBody LogoutRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authService.logout(request));
+    }
+
     @Operation(summary = "Forgot Password", description = "Send password reset instructions to user's email")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Password reset instructions sent successfully"),
@@ -79,5 +85,12 @@ public class AuthController {
             @PathVariable String studentCode
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(authService.forgotPassword(studentCode));
+    }
+
+    @PostMapping(Endpoint.V1.Auth.REFRESH)
+    public ResponseEntity<GlobalResponse<Meta, RefreshResponse>> refreshToken(@RequestBody RefreshRequest request) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(authService.refreshToken(request));
     }
 }

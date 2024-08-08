@@ -19,14 +19,16 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class AuthResponse {
     String accessToken;
+    String refreshToken;
     String type;
     String roles;
     UserResponse   loggedInUser;
 
-    public AuthResponse(String accessToken, String type, String roles, UserResponse user) {
+    public AuthResponse(String accessToken,String refreshToken,String type, String roles, UserResponse user) {
         this.accessToken = accessToken;
         this.type = "Bearer";
         this.roles = roles;
+        this.refreshToken = refreshToken;
         this.loggedInUser = user;
     }
 }
