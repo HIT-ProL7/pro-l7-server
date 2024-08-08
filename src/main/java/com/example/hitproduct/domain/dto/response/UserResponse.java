@@ -22,12 +22,13 @@ public class UserResponse {
     String    studentCode;
     String    fullName;
     String    email;
-    String avatarUrl;
-    String bannerUrl;
-    String githubUrl;
-    String facebookUrl;
+    String    avatarUrl;
+    String    bannerUrl;
+    String    githubUrl;
+    String    facebookUrl;
     Timestamp createdAt;
     Timestamp updatedAt;
     Integer   cohort;
     String    description;
+    String    role;
 }

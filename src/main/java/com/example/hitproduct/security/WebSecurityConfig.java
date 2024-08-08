@@ -19,6 +19,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -53,12 +54,12 @@ public class WebSecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                    .requestMatchers(Endpoint.V1.Auth.REGISTER).hasRole("ADMIN")
-                    .requestMatchers(Endpoint.V1.Auth.PREFIX + CATCH_ALL_WILDCARD).permitAll()
-//                    .requestMatchers(Endpoint.V1.Classroom.PREFIX + CATCH_ALL_WILDCARD).hasRole("ADMIN")
+                            .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                            .requestMatchers(Endpoint.V1.Auth.REGISTER).hasRole("ADMIN")
+                            .requestMatchers(Endpoint.V1.Auth.PREFIX + CATCH_ALL_WILDCARD).permitAll()
+                            .requestMatchers(HttpMethod.GET, Endpoint.V1.Classroom.PREFIX).hasRole("ADMIN")
 //                    .requestMatchers(Endpoint.V1.Lesson.PREFIX + CATCH_ALL_WILDCARD).hasRole("ADMIN")
-                    .anyRequest().authenticated()
+                            .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);

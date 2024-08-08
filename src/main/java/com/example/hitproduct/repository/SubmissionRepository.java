@@ -10,6 +10,8 @@ package com.example.hitproduct.repository;
 import com.example.hitproduct.domain.entity.Exercise;
 import com.example.hitproduct.domain.entity.Submission;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,4 +19,8 @@ import java.util.List;
 @Repository
 public interface SubmissionRepository extends JpaRepository<Submission, Integer> {
     List<Submission> findAllByExercise(Exercise exercise);
+
+    @Modifying
+    @Query("DELETE FROM Submission s WHERE s.exercise.id IN (:exerciseIds)")
+    void deleteByExerciseIds(List<Integer> exerciseIds);
 }

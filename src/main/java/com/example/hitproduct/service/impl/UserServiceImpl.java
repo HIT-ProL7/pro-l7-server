@@ -45,10 +45,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByStudentCode(studentCode)
                                   .orElseThrow(() -> new UsernameNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
+        UserResponse response = userMapper.toUserResponse(user);
+        response.setRole(user.getRole().getName());
+
         return GlobalResponse
                 .<Meta, UserResponse>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
-                .data(userMapper.toUserResponse(user))
+                .data(response)
                 .build();
     }
 

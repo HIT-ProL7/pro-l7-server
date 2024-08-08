@@ -16,15 +16,13 @@ import com.example.hitproduct.domain.dto.request.CreateLessonRequest;
 import com.example.hitproduct.domain.dto.request.UpdateLessonRequest;
 import com.example.hitproduct.domain.dto.response.LessonResponse;
 import com.example.hitproduct.domain.entity.Classroom;
+import com.example.hitproduct.domain.entity.Exercise;
 import com.example.hitproduct.domain.entity.Lesson;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.LessonMapper;
 import com.example.hitproduct.exception.ForbiddenException;
 import com.example.hitproduct.exception.NotFoundException;
-import com.example.hitproduct.repository.ClassroomRepository;
-import com.example.hitproduct.repository.LessonRepository;
-import com.example.hitproduct.repository.LessonVideoRepository;
-import com.example.hitproduct.repository.UserRepository;
+import com.example.hitproduct.repository.*;
 import com.example.hitproduct.service.LessonService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +42,7 @@ public class LessonServiceImpl implements LessonService {
     LessonVideoRepository videoRepository;
     UserRepository        userRepository;
     ClassroomRepository   classroomRepository;
+    SubmissionRepository  submissionRepository;
 
     LessonMapper lessonMapper;
 
@@ -81,7 +80,7 @@ public class LessonServiceImpl implements LessonService {
     public GlobalResponse<Meta, List<LessonResponse>> getLessons(Integer id) {
         List<Lesson> list = lessonRepository.findAllByClassroomId(id).stream().toList();
         List<LessonResponse> responses = new ArrayList<>();
-        for(var lesson : list){
+        for (var lesson : list) {
             responses.add(lessonMapper.toLessonResponse(lesson));
         }
 
@@ -108,7 +107,8 @@ public class LessonServiceImpl implements LessonService {
 
     @Override
     public GlobalResponse<Meta, LessonResponse> updateLesson(Integer id, UpdateLessonRequest request, User loginUser) {
-        User currentUser = userRepository.findByStudentCode(loginUser.getStudentCode()).orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        User currentUser =
+                userRepository.findByStudentCode(loginUser.getStudentCode()).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         Lesson foundLesson = lessonRepository.findById(id)
                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
@@ -123,7 +123,7 @@ public class LessonServiceImpl implements LessonService {
         if (request.name() != null) {
             foundLesson.setName(request.name());
         }
-        if(request.content() != null){
+        if (request.content() != null) {
             foundLesson.setContent(request.content());
         }
 
@@ -139,7 +139,7 @@ public class LessonServiceImpl implements LessonService {
     @Transactional
     @Override
     public GlobalResponse<Meta, Void> deleteLesson(Integer id, User loginUser) {
-        User currentUser = userRepository.findByStudentCode(loginUser.getStudentCode()).orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        User currentUser = userRepository.findByStudentCode(loginUser.getStudentCode()).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         Lesson foundLesson = lessonRepository.findById(id)
                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
@@ -147,6 +147,12 @@ public class LessonServiceImpl implements LessonService {
             throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
         }
 
+        submissionRepository.deleteByExerciseIds(
+                foundLesson.getExercises()
+                           .stream()
+                           .map(Exercise::getId)
+                           .collect(Collectors.toList())
+        );
         videoRepository.deleteAllByLesson(foundLesson);
         lessonRepository.deleteById(id);
 

@@ -49,7 +49,7 @@ public class Lesson {
     @OneToMany(mappedBy = "lesson")
     List<LessonVideo> videos;
 
-    @OneToMany(mappedBy = "lesson")
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
     List<Exercise> exercises;
 
     public void addLessonVideo(LessonVideo video) {
