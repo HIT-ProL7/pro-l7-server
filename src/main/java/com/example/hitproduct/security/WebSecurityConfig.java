@@ -8,11 +8,17 @@ package com.example.hitproduct.security;
  */
 
 import com.example.hitproduct.constant.Endpoint;
+import com.example.hitproduct.constant.ErrorMessage;
+import com.example.hitproduct.domain.dto.global.GlobalResponse;
+import com.example.hitproduct.domain.dto.global.Meta;
+import com.example.hitproduct.domain.dto.global.Status;
 import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.security.jwt.AuthTokenFilter;
 import com.example.hitproduct.security.jwt.JwtAuthEntryPoint;
 import com.example.hitproduct.service.AuthService;
 import com.example.hitproduct.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -47,17 +54,35 @@ public class WebSecurityConfig {
     JwtAuthEntryPoint      authEntryPoint;
     AuthTokenFilter        authTokenFilter;
     AuthenticationProvider authenticationProvider;
+    ObjectMapper           objectMapper;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
+            .exceptionHandling(exception -> {
+                exception.authenticationEntryPoint(authEntryPoint);
+                exception.accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    String message = "Access denied! You do not have permission to access this resource.";
+                    GlobalResponse<Meta, Void> responseBody = GlobalResponse.<Meta, Void>builder()
+                                                                            .meta(Meta.builder()
+                                                                                      .status(Status.ERROR)
+                                                                                      .message(message)
+                                                                                      .build()
+                                                                            )
+                                                                            .build();
+                    objectMapper.writeValue(response.getOutputStream(), responseBody);
+
+                });
+            })
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                             .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                             .requestMatchers(Endpoint.V1.Auth.REGISTER).hasRole("ADMIN")
                             .requestMatchers(Endpoint.V1.Auth.PREFIX + CATCH_ALL_WILDCARD).permitAll()
                             .requestMatchers(HttpMethod.GET, Endpoint.V1.Classroom.PREFIX).hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, Endpoint.V1.Classroom.CREATE).hasRole("ADMIN")
 //                    .requestMatchers(Endpoint.V1.Lesson.PREFIX + CATCH_ALL_WILDCARD).hasRole("ADMIN")
                             .anyRequest().authenticated()
             )
