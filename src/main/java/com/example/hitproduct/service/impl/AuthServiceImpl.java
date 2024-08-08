@@ -211,6 +211,10 @@ public class AuthServiceImpl implements AuthService {
 
         tokenRepository.save(InvalidatedToken.builder().id(id).expirationTime(expTime).build());
 
+        if (expTime.after(new Date())) {
+            throw new AppException(ErrorMessage.Auth.ERR_EXPIRED_SESSION);
+        }
+
         User user = userRepository.findByStudentCode(username).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
 
