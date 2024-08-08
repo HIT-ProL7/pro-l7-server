@@ -13,11 +13,11 @@ import com.example.hitproduct.domain.dto.global.BlankData;
 import com.example.hitproduct.domain.dto.global.GlobalResponse;
 import com.example.hitproduct.domain.dto.global.Meta;
 import com.example.hitproduct.domain.dto.global.Status;
-import com.example.hitproduct.domain.dto.request.AddUserRequest;
-import com.example.hitproduct.domain.dto.request.LoginRequest;
-import com.example.hitproduct.domain.dto.request.UpdateInfoRequest;
+import com.example.hitproduct.domain.dto.request.*;
 import com.example.hitproduct.domain.dto.response.AuthResponse;
+import com.example.hitproduct.domain.dto.response.RefreshResponse;
 import com.example.hitproduct.domain.dto.response.UserResponse;
+import com.example.hitproduct.domain.entity.InvalidatedToken;
 import com.example.hitproduct.domain.entity.Role;
 import com.example.hitproduct.domain.entity.User;
 import com.example.hitproduct.domain.mapper.UserMapper;
@@ -25,14 +25,22 @@ import com.example.hitproduct.exception.AlreadyExistsException;
 import com.example.hitproduct.exception.AppException;
 import com.example.hitproduct.exception.NotFoundException;
 import com.example.hitproduct.job.AutoMailer;
+import com.example.hitproduct.repository.InvalidatedTokenRepository;
 import com.example.hitproduct.repository.RoleRepository;
 import com.example.hitproduct.repository.UserRepository;
 import com.example.hitproduct.security.jwt.JwtUtils;
 import com.example.hitproduct.service.AuthService;
 import com.example.hitproduct.util.RandomUtil;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,20 +48,38 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Log4j2
 public class AuthServiceImpl implements AuthService {
-    UserRepository        userRepository;
-    RoleRepository        roleRepository;
-    UserMapper            userMapper;
-    PasswordEncoder       passwordEncoder;
-    AuthenticationManager authenticationManager;
-    JwtUtils              jwtUtils;
-    RandomUtil            randomUtil;
-    AutoMailer            mailer;
+    UserRepository             userRepository;
+    RoleRepository             roleRepository;
+    InvalidatedTokenRepository tokenRepository;
+    UserMapper                 userMapper;
+    PasswordEncoder            passwordEncoder;
+    AuthenticationManager      authenticationManager;
+    JwtUtils                   jwtUtils;
+    RandomUtil                 randomUtil;
+    AutoMailer                 mailer;
+
+    @NonFinal
+    @Value("${auth.token.jwtSecret}")
+    private String jwtSecret;
+
+    @NonFinal
+    @Value("${auth.token.expirationInMils}")
+    private int jwtExpirationTime;
+
+    @NonFinal
+    @Value("${auth.token.refreshInMils}")
+    private int jwtRefreshTime;
 
     @Override
     public GlobalResponse<Meta, UserResponse> register(AddUserRequest userRequest) {
@@ -90,6 +116,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         String accessToken = jwtUtils.generateJwtTokenForUser(authentication);
+        String refreshToken = jwtUtils.generateRefreshToken(authentication);
         User loggedInUser = (User) authentication.getPrincipal();
         String roles = loggedInUser.getAuthorities().stream()
                                    .map(GrantedAuthority::getAuthority)
@@ -101,6 +128,7 @@ public class AuthServiceImpl implements AuthService {
                 .data(AuthResponse
                         .builder()
                         .accessToken(accessToken)
+                        .refreshToken(refreshToken)
                         .roles(roles)
                         .loggedInUser(UserMapper.INSTANCE.toUserResponse(loggedInUser))
                         .build()
@@ -133,5 +161,88 @@ public class AuthServiceImpl implements AuthService {
                 .meta(Meta.builder().status(Status.SUCCESS).build())
                 .data(userMapper.toUserResponse(user))
                 .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, String> logout(LogoutRequest request) {
+        try {
+            var accessClaim = Jwts.parserBuilder()
+                                  .setSigningKey(key())
+                                  .build()
+                                  .parseClaimsJws(request.getAccessToken())
+                                  .getBody();
+
+            var refreshClaim = Jwts.parserBuilder()
+                                   .setSigningKey(key())
+                                   .build()
+                                   .parseClaimsJws(request.getRefreshToken())
+                                   .getBody();
+
+
+            tokenRepository.save(InvalidatedToken
+                    .builder()
+                    .id(accessClaim.getId())
+                    .expirationTime(accessClaim.getExpiration())
+                    .build()
+            );
+
+            tokenRepository.save(InvalidatedToken
+                    .builder()
+                    .id(refreshClaim.getId())
+                    .expirationTime(refreshClaim.getExpiration())
+                    .build()
+            );
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return GlobalResponse
+                .<Meta, String>builder()
+                .meta(Meta.builder().status(Status.SUCCESS).build())
+                .data("Đăng xuất thành công")
+                .build();
+    }
+
+    @Override
+    public GlobalResponse<Meta, RefreshResponse> refreshToken(RefreshRequest request) {
+        String id = jwtUtils.getJwtIdFromToken(request.getToken());
+        Date expTime = jwtUtils.getExpirationTimeFromToken(request.getToken());
+        String username = jwtUtils.getUserNameFromToken(request.getToken());
+
+        tokenRepository.save(InvalidatedToken.builder().id(id).expirationTime(expTime).build());
+
+        User user = userRepository.findByStudentCode(username).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+
+
+        String accessToken = createToken(user, jwtExpirationTime);
+        String refreshToken = createToken(user, jwtRefreshTime);
+
+        return GlobalResponse.<Meta, RefreshResponse>builder()
+                             .meta(Meta.builder().status(Status.SUCCESS).build())
+                             .data(RefreshResponse
+                                     .builder()
+                                     .accessToken(accessToken)
+                                     .refreshToken(refreshToken)
+                                     .build())
+                             .build();
+    }
+
+    private Key key() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    }
+
+    private String createToken(User user, int time) {
+        List<String> roles = user.getAuthorities()
+                                 .stream()
+                                 .map(GrantedAuthority::getAuthority)
+                                 .collect(Collectors.toList());
+
+        return Jwts.builder().setSubject(user.getUsername())
+                   .setId(UUID.randomUUID().toString())
+                   .claim("role", roles)
+                   .setIssuedAt(new Date())
+                   .setExpiration(new Date((new Date()).getTime() + time))
+                   .signWith(key(), SignatureAlgorithm.HS256)
+                   .compact();
     }
 }

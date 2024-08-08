@@ -55,6 +55,9 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
             message = jwtUtils.checkToken(authHeader.substring(BEARER_PREFIX.length()));
         }
 
+        if (message == null) {
+            message = "exception.auth.invalid-token";
+        }
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(message != null ? HttpServletResponse.SC_UNAUTHORIZED : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 

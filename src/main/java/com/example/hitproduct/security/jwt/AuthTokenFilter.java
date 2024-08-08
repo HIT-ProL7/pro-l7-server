@@ -7,7 +7,11 @@ package com.example.hitproduct.security.jwt;
  * @social Facebook: https://www.facebook.com/profile.php?id=100047152174225
  */
 
+import com.example.hitproduct.constant.ErrorMessage;
+import com.example.hitproduct.exception.AppException;
+import com.example.hitproduct.repository.InvalidatedTokenRepository;
 import com.example.hitproduct.service.UserService;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +43,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private final        UserDetailsService userDetailsService;
     private static final Logger             logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
+    private final InvalidatedTokenRepository tokenRepository;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -55,6 +61,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                         null,
                         userDetails.getAuthorities()
                 );
+
+                String jwtID = jwtUtils.getJwtIdFromToken(jwt);
+
+                if (tokenRepository.existsById(jwtID)) {
+                    throw new AppException(ErrorMessage.Auth.ERR_INVALID_TOKEN);
+                }
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);

@@ -18,6 +18,8 @@ public interface Endpoint {
             String REGISTER        = PREFIX + "/register";
             String LOGIN           = PREFIX + "/login";
             String FORGOT_PASSWORD = PREFIX + "/forgot-password/{studentCode}";
+            String LOGOUT          = PREFIX + "/logout";
+            String REFRESH         = PREFIX + "/refresh";
         }
 
         interface Classroom {
@@ -55,10 +57,10 @@ public interface Endpoint {
         }
 
         interface Submission {
-            String    PREFIX     = V1.PREFIX + "/submission";
-            String    GET_SUBMIT = PREFIX + "/{exerciseId}";
-            String    UPDATE_SUBMIT = PREFIX +"/{submitId}";
-            String    DELETE_SUBMIT = PREFIX + "/{submitId}";
+            String PREFIX        = V1.PREFIX + "/submission";
+            String GET_SUBMIT    = PREFIX + "/{exerciseId}";
+            String UPDATE_SUBMIT = PREFIX + "/{submitId}";
+            String DELETE_SUBMIT = PREFIX + "/{submitId}";
         }
     }
 }
