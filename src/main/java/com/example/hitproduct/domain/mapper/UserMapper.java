@@ -12,6 +12,7 @@ import com.example.hitproduct.domain.dto.request.AddUserRequest;
 import com.example.hitproduct.domain.dto.response.UserResponse;
 import com.example.hitproduct.domain.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
@@ -20,6 +21,7 @@ public interface UserMapper {
 
     User toUser(AddUserRequest request);
 
+    @Mapping(target = "role", ignore = true)
     UserResponse toUserResponse(User user);
 
     User toUser(UpdateInfoRequest request);
