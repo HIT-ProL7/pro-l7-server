@@ -70,18 +70,21 @@ public class JwtUtils {
             Jwts.parserBuilder()
                 .setSigningKey(key())
                 .build()
-                .parse(token)
-            ;
+                .parse(token);
             return null;
         } catch (MalformedJwtException e) {
-            logger.error("Invalid jwt token : {} ", e.getMessage());
+            logger.error("Invalid JWT token: {}", e.getMessage());
             return ErrorMessage.Auth.ERR_INVALID_TOKEN;
         } catch (ExpiredJwtException e) {
-            logger.error("Expired token : {}", e.getMessage());
+            logger.error("Expired token: {}", e.getMessage());
             return ErrorMessage.Auth.ERR_EXPIRED_SESSION;
         } catch (UnsupportedJwtException e) {
-            logger.error("This token is not supported : {}", e.getMessage());
+            logger.error("This token is not supported: {}", e.getMessage());
             return ErrorMessage.Auth.ERR_UNSUPPORTED_TOKEN;
+        } catch (SignatureException e) {
+            logger.error("Invalid JWT signature: {}", e.getMessage());
+            return ErrorMessage.Auth.ERR_INVALID_SIGNATURE;
         }
     }
+
 }

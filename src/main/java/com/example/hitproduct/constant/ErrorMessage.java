@@ -17,7 +17,8 @@ public interface ErrorMessage {
         String ERR_EXPIRED_SESSION    = "exception.auth.expired-session";
         String ERR_INVALID_TOKEN      = "exception.auth.invalid-token";
         String ERR_UNSUPPORTED_TOKEN  = "exception.auth.unsupported-token";
-        String ERR_UNAUTHORIZED           = "exception.auth.unauthorized";
+        String ERR_UNAUTHORIZED       = "exception.auth.unauthorized";
+        String ERR_INVALID_SIGNATURE  = "exception.auth.invalid.signature";
     }
 
     interface User {
