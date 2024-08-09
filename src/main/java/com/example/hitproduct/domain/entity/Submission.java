@@ -26,7 +26,6 @@ import java.sql.Timestamp;
 public class Submission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "submission_id")
     Integer id;
     String content;
 
