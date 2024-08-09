@@ -41,6 +41,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -137,7 +138,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public GlobalResponse<Meta, UserResponse> forgotPassword(String studentCode) {
+    public GlobalResponse<Meta, String> forgotPassword(String studentCode) {
         User user = userRepository.findByStudentCode(studentCode)
                                   .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
@@ -151,15 +152,27 @@ public class AuthServiceImpl implements AuthService {
                                        "Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận hỗ trợ của chúng tôi.\n" +
                                        "Trân trọng,\nHIT ProL7").build();
 
-        mailer.send(mailDTO);
-        user.setPassword(passwordEncoder.encode(newPassword));
+        try{
+            mailer.send(mailDTO);
+            user.setPassword(passwordEncoder.encode(newPassword));
 
-        user = userRepository.save(user);
+            userRepository.save(user);
+
+            return GlobalResponse
+                    .<Meta, String>builder()
+                    .meta(Meta.builder().status(Status.SUCCESS).build())
+                    .data("Vui lòng kiểm tra email của bạn để nhận mật khẩu mới")
+                    .build();
+        }catch (MailException ex) {
+            log.error("Error sending email: {}", ex.getMessage());
+        } catch (Exception ex) {
+            log.error("Unexpected error: {}", ex.getMessage());
+        }
 
         return GlobalResponse
-                .<Meta, UserResponse>builder()
+                .<Meta, String>builder()
                 .meta(Meta.builder().status(Status.SUCCESS).build())
-                .data(userMapper.toUserResponse(user))
+                .data(null)
                 .build();
     }
 
