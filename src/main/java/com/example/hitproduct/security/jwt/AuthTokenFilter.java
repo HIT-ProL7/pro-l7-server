@@ -10,8 +10,6 @@ package com.example.hitproduct.security.jwt;
 import com.example.hitproduct.constant.ErrorMessage;
 import com.example.hitproduct.exception.AppException;
 import com.example.hitproduct.repository.InvalidatedTokenRepository;
-import com.example.hitproduct.service.UserService;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,17 +32,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
-    private String AUTH_PREFIX = "Bearer ";
-    private String AUTH_HEADER = "Authorization";
+    private static final Logger logger      = LoggerFactory.getLogger(AuthTokenFilter.class);
 
-    private final        JwtUtils           jwtUtils;
-    private final        UserDetailsService userDetailsService;
-    private static final Logger             logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+    @NonFinal
+    private              String AUTH_PREFIX = "Bearer ";
+    @NonFinal
+    private              String AUTH_HEADER = "Authorization";
 
-    private final InvalidatedTokenRepository tokenRepository;
+    JwtUtils                   jwtUtils;
+    UserDetailsService         userDetailsService;
+    InvalidatedTokenRepository tokenRepository;
 
     @Override
     protected void doFilterInternal(
