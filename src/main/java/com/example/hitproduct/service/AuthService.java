@@ -22,7 +22,7 @@ public interface AuthService {
 
     GlobalResponse<Meta, AuthResponse> login(LoginRequest loginRequest);
 
-    GlobalResponse<Meta, UserResponse> forgotPassword(String studentCode);
+    GlobalResponse<Meta, String> forgotPassword(String studentCode);
 
     GlobalResponse<Meta, String> logout(LogoutRequest request);
 
