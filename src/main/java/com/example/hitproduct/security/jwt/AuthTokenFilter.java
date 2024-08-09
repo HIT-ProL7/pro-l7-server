@@ -20,6 +20,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,8 +32,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
     private static final Logger logger      = LoggerFactory.getLogger(AuthTokenFilter.class);
@@ -42,8 +42,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @NonFinal
     private              String AUTH_HEADER = "Authorization";
 
+    @Autowired
     JwtUtils                   jwtUtils;
+
+    @Autowired
     UserDetailsService         userDetailsService;
+
+    @Autowired
     InvalidatedTokenRepository tokenRepository;
 
     @Override
