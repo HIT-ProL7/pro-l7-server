@@ -17,6 +17,7 @@ import com.example.hitproduct.security.jwt.AuthTokenFilter;
 import com.example.hitproduct.security.jwt.JwtAuthEntryPoint;
 import com.example.hitproduct.service.AuthService;
 import com.example.hitproduct.service.UserService;
+import com.example.hitproduct.util.MessageSourceUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -55,6 +56,7 @@ public class WebSecurityConfig {
     AuthTokenFilter        authTokenFilter;
     AuthenticationProvider authenticationProvider;
     ObjectMapper           objectMapper;
+    MessageSourceUtil      messageSourceUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -64,16 +66,14 @@ public class WebSecurityConfig {
                 exception.accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    String message = "Access denied! You do not have permission to access this resource.";
                     GlobalResponse<Meta, Void> responseBody = GlobalResponse.<Meta, Void>builder()
                                                                             .meta(Meta.builder()
                                                                                       .status(Status.ERROR)
-                                                                                      .message(message)
+                                                                                      .message(messageSourceUtil.getLocalizedMessage(ErrorMessage.Auth.ERR_FORBIDDEN))
                                                                                       .build()
                                                                             )
                                                                             .build();
                     objectMapper.writeValue(response.getOutputStream(), responseBody);
-
                 });
             })
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

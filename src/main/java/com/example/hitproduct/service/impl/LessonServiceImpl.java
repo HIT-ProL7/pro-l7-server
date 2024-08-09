@@ -113,7 +113,7 @@ public class LessonServiceImpl implements LessonService {
                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
         if (!isAdminOrLeader(currentUser, foundLesson.getClassroom())) {
-            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+            throw new ForbiddenException(ErrorMessage.Auth.ERR_FORBIDDEN);
         }
 
         if (request.title() != null) {
@@ -139,12 +139,13 @@ public class LessonServiceImpl implements LessonService {
     @Transactional
     @Override
     public GlobalResponse<Meta, Void> deleteLesson(Integer id, User loginUser) {
-        User currentUser = userRepository.findByStudentCode(loginUser.getStudentCode()).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        User currentUser =
+                userRepository.findByStudentCode(loginUser.getStudentCode()).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         Lesson foundLesson = lessonRepository.findById(id)
                                              .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
         if (!isAdminOrLeader(currentUser, foundLesson.getClassroom())) {
-            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+            throw new ForbiddenException(ErrorMessage.Auth.ERR_FORBIDDEN);
         }
 
         submissionRepository.deleteByExerciseIds(

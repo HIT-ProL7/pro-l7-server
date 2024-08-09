@@ -59,7 +59,7 @@ public class ClassroomServiceImpl implements ClassroomService {
     ClassroomMapper   classroomMapper;
     UserMapper        userMapper;
     MessageSourceUtil messageSourceUtil;
-    CloudinaryUtil cloudinaryUtil;
+    CloudinaryUtil    cloudinaryUtil;
 
     @Override
     public GlobalResponse<Meta, CreateClassroomResponse> createClass(CreateClassroomRequest request) {
@@ -100,7 +100,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 );
 
         if (!canClose && !currentUser.getRole().getName().equals("ROLE_ADMIN")) {
-            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+            throw new ForbiddenException(ErrorMessage.Auth.ERR_FORBIDDEN);
         }
 
         foundClassroom.setClosed(CommonConstant.Classroom.IS_CLOSE);
@@ -128,7 +128,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 .anyMatch(item -> item.getSeatRole().equals(SeatRole.LEADER) && item.getUser().getId().equals(currentUser.getId()));
 
         if (!canUpdate && !currentUser.getRole().getName().equals("ROLE_ADMIN")) {
-            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+            throw new ForbiddenException(ErrorMessage.Auth.ERR_FORBIDDEN);
         }
 
         if (request.getName() != null) foundClassroom.setName(request.getName());
@@ -171,7 +171,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                      .parallelStream()
                      .filter(item -> item.getUser().getId().equals(currentUser.getId()) && item.getSeatRole().equals(SeatRole.LEADER))
                      .findFirst()
-                     .orElseThrow(() -> new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN));
+                     .orElseThrow(() -> new ForbiddenException(ErrorMessage.Auth.ERR_FORBIDDEN));
         }
 
         return GlobalResponse
@@ -220,7 +220,7 @@ public class ClassroomServiceImpl implements ClassroomService {
 
         User newUser = newUserOpt.get();
 
-        if(positionRepository.existsByClassroomAndUser(classroom, newUser)) {
+        if (positionRepository.existsByClassroomAndUser(classroom, newUser)) {
             throw new AppException(ErrorMessage.Classroom.ERR_EXISTS_USER_IN_CLASS);
         }
 

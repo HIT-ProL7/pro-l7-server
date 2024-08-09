@@ -56,10 +56,10 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
         }
 
         if (message == null) {
-            message = "exception.auth.invalid-token";
+            message = ErrorMessage.Auth.ERR_INVALID_TOKEN;
         }
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(message != null ? HttpServletResponse.SC_UNAUTHORIZED : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
         GlobalResponse<Meta, Void> responseBody = GlobalResponse.<Meta, Void>builder()
                                                                 .meta(Meta.builder()

@@ -39,7 +39,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
 
         if (!isAdminOrLeader(userRepository.findByStudentCode(user.getUsername()).get(), lesson.getClassroom())) {
-            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+            throw new ForbiddenException(ErrorMessage.Auth.ERR_FORBIDDEN);
         }
         Exercise mappedExercise = ExerciseMapper.INSTANCE.toExercise(request);
         mappedExercise.setLesson(lesson);
@@ -59,7 +59,7 @@ public class ExerciseServiceImpl implements ExerciseService {
 
 
         if (!isAdminOrLeader(userRepository.findByStudentCode(user.getUsername()).get(), lesson.getClassroom())) {
-            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+            throw new ForbiddenException(ErrorMessage.Auth.ERR_FORBIDDEN);
         }
         Optional<Exercise> foundExercise = lesson.getExercises().stream().filter(exercise -> exercise.getId().equals(exerciseId)).findFirst();
         if (foundExercise.isEmpty()) {
@@ -87,9 +87,8 @@ public class ExerciseServiceImpl implements ExerciseService {
                                         .orElseThrow(() -> new NotFoundException(ErrorMessage.Lesson.ERR_LESSON_NOT_FOUND));
 
 
-
         if (!isAdminOrLeader(userRepository.findByStudentCode(user.getUsername()).get(), lesson.getClassroom())) {
-            throw new ForbiddenException(ErrorMessage.Classroom.ERR_FORBIDDEN);
+            throw new ForbiddenException(ErrorMessage.Auth.ERR_FORBIDDEN);
         }
         Optional<Exercise> foundExercise = lesson.getExercises().stream().filter(exercise -> exercise.getId().equals(exerciseId)).findFirst();
         if (foundExercise.isEmpty()) {

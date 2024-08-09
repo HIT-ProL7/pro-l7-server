@@ -19,6 +19,7 @@ public interface ErrorMessage {
         String ERR_UNSUPPORTED_TOKEN  = "exception.auth.unsupported-token";
         String ERR_UNAUTHORIZED       = "exception.auth.unauthorized";
         String ERR_INVALID_SIGNATURE  = "exception.auth.invalid.signature";
+        String ERR_FORBIDDEN          = "exception.auth.forbidden";
     }
 
     interface User {
@@ -32,7 +33,6 @@ public interface ErrorMessage {
     interface Classroom {
         String ERR_EXISTS_CLASSNAME     = "exception.classroom.exist";
         String ERR_NOT_FOUND            = "exception.classroom.not-found";
-        String ERR_FORBIDDEN            = "exception.classroom.forbidden";
         String ERR_NOTFOUND_BY_ID       = "exception.classroom.not-found";
         String ERR_EXISTS_USER_IN_CLASS = "exception.classroom.user-exist";
         String ERR_FILE_UPLOAD          = "exception.classroom.file-format";
