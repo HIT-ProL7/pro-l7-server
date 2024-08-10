@@ -224,7 +224,7 @@ public class AuthServiceImpl implements AuthService {
 
         tokenRepository.save(InvalidatedToken.builder().id(id).expirationTime(expTime).build());
 
-        if (expTime.after(new Date())) {
+        if (!expTime.after(new Date())) {
             throw new AppException(ErrorMessage.Auth.ERR_EXPIRED_SESSION);
         }
 
