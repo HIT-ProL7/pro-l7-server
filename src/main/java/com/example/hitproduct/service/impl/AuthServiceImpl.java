@@ -232,7 +232,7 @@ public class AuthServiceImpl implements AuthService {
 
 
         String accessToken = createToken(user, jwtExpirationTime);
-        String refreshToken = createToken(user, jwtRefreshTime);
+        String refreshToken = request.getToken();
 
         return GlobalResponse.<Meta, RefreshResponse>builder()
                              .meta(Meta.builder().status(Status.SUCCESS).build())
