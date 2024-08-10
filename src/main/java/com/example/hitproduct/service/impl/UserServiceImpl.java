@@ -65,7 +65,6 @@ public class UserServiceImpl implements UserService {
 
         if (request.fullName() != null) user.setFullName(request.fullName());
         if (request.email() != null) user.setEmail(request.email());
-        if (request.cohort() != null) user.setCohort(request.cohort());
         if (request.description() != null) user.setDescription(request.description());
         if (request.githubUrl() != null) user.setGithubUrl(request.githubUrl());
         if (request.facebookUrl() != null) user.setFacebookUrl(request.facebookUrl());

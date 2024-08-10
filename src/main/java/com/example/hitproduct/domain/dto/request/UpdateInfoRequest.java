@@ -18,9 +18,6 @@ public record UpdateInfoRequest(
         @NotEmpty(message = "Username is not empty")
         String fullName,
 
-        // khoá
-        Integer cohort,
-
         MultipartFile avatar,
         MultipartFile banner,
 
